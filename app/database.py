@@ -3,7 +3,13 @@ import sqlite3
 import logging
 from typing import Optional
 from datetime import date
-from supabase import create_client, Client
+try:
+    from supabase import create_client, Client
+    _HAS_SUPABASE = True
+except ImportError:
+    _HAS_SUPABASE = False
+    Client = None
+    create_client = None
 
 logger = logging.getLogger("cv_fit_api")
 
@@ -12,14 +18,14 @@ SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 
 supabase_client: Optional[Client] = None
 
-if SUPABASE_URL and SUPABASE_KEY:
+if _HAS_SUPABASE and SUPABASE_URL and SUPABASE_KEY:
     try:
         supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
         logger.info("Connected to Supabase client successfully.")
     except Exception as e:
         logger.error(f"Failed to initialize Supabase client: {e}")
 else:
-    logger.warning("Supabase environment variables not found. Falling back to local SQLite.")
+    logger.info("Supabase library or credentials not found. Using local SQLite database (cv_fit_local.db).")
 
 # Exercise ID mapping from user SQL database
 EXERCISE_ID_MAP = {

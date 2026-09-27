@@ -1,6 +1,7 @@
 @echo off
-chcp 65001 >nul 2>&1
-title CV for Fit - Fitness Tracker
+setlocal EnableDelayedExpansion
+title CV for Fit - AI Fitness Coach
+cd /d "%~dp0"
 
 echo.
 echo    ====================================================
@@ -9,64 +10,63 @@ echo         Real-Time Fitness Form Analysis Engine
 echo    ====================================================
 echo.
 
-:: -------------------------------------------
-:: Check Python is available
-:: -------------------------------------------
 where py >nul 2>&1
 if %errorlevel% neq 0 (
-    echo    [ERROR] Python not found on this system.
-    echo    Please install Python 3.10+ from https://www.python.org
-    echo.
-    pause
-    exit /b 1
+    where python >nul 2>&1
+    if %errorlevel% neq 0 (
+        echo    [ERROR] Python is not installed or not in PATH.
+        echo    Please install Python 3.10+ from https://www.python.org
+        echo.
+        pause
+        exit /b 1
+    )
+    set "PYTHON_EXE=python"
+) else (
+    set "PYTHON_EXE=py"
 )
 
-:: -------------------------------------------
-:: Check dependencies one by one
-:: -------------------------------------------
-echo    Checking dependencies...
-echo.
-
-py -c "import mediapipe" >nul 2>&1
-if %errorlevel% neq 0 goto install_deps
-
-py -c "import cv2" >nul 2>&1
-if %errorlevel% neq 0 goto install_deps
-
-py -c "import numpy" >nul 2>&1
-if %errorlevel% neq 0 goto install_deps
-
-py -c "import fastdtw" >nul 2>&1
-if %errorlevel% neq 0 goto install_deps
-
-py -c "import scipy" >nul 2>&1
-if %errorlevel% neq 0 goto install_deps
-
-py -c "import pyttsx3" >nul 2>&1
-if %errorlevel% neq 0 goto install_deps
-
-echo    [OK] All dependencies found.
-echo.
-goto choose_exercise
-
-:install_deps
-echo    [!] Some dependencies are missing. Installing now...
-echo.
-py -m pip install mediapipe opencv-python numpy fastdtw scipy pyttsx3
+echo    [INFO] Checking dependencies...
+%PYTHON_EXE% -c "import cv2, numpy, mediapipe, fastdtw, scipy, pyttsx3, fastapi, uvicorn" >nul 2>&1
 if %errorlevel% neq 0 (
-    echo.
-    echo    [ERROR] Failed to install dependencies.
-    pause
-    exit /b 1
+    echo    [!] Installing missing packages...
+    %PYTHON_EXE% -m pip install mediapipe opencv-python numpy fastdtw scipy pyttsx3 uvicorn fastapi python-multipart
+    if %errorlevel% neq 0 (
+        echo    [ERROR] Failed to install packages.
+        pause
+        exit /b 1
+    )
 )
-echo.
-echo    [OK] Dependencies installed successfully.
+echo    [OK] Environment is ready.
 echo.
 
-:: -------------------------------------------
-:: Choose exercise
-:: -------------------------------------------
+:choose_mode
+echo    ------------------------------------
+echo       Choose Mode / Select Launch Mode
+echo    ------------------------------------
+echo       [1] Web Dashboard (Modern Browser UI) - RECOMMENDED
+echo       [2] Desktop OpenCV Camera Window
+echo    ------------------------------------
+echo.
+
+:ask_mode
+set /p "mode_choice=    Enter choice (1 or 2): "
+if "%mode_choice%"=="1" goto launch_web
+if "%mode_choice%"=="2" goto choose_exercise
+echo    [!] Invalid choice. Please enter 1 or 2.
+goto ask_mode
+
+:launch_web
+echo.
+echo    [OK] Starting CV for Fit Web Server...
+echo    [INFO] Opening dashboard at http://localhost:8000
+echo.
+start http://localhost:8000
+%PYTHON_EXE% -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+pause
+exit /b 0
+
 :choose_exercise
+echo.
 echo    ------------------------------------
 echo       Choose an Exercise
 echo    ------------------------------------
@@ -82,94 +82,34 @@ echo    ------------------------------------
 echo.
 
 :ask_exercise
-set /p "exercise_choice=    Enter your choice (1-8): "
+set /p "exercise_choice=    Enter exercise (1-8): "
 
-if "%exercise_choice%"=="1" (
-    set "exercise=bicep_curl"
-    echo.
-    echo    [OK] Selected: Bicep Curl
-    echo.
-    goto choose_source
-)
-if "%exercise_choice%"=="2" (
-    set "exercise=squat"
-    echo.
-    echo    [OK] Selected: Squat
-    echo.
-    goto choose_source
-)
-if "%exercise_choice%"=="3" (
-    set "exercise=lunge"
-    echo.
-    echo    [OK] Selected: Lunge
-    echo.
-    goto choose_source
-)
-if "%exercise_choice%"=="4" (
-    set "exercise=push_up"
-    echo.
-    echo    [OK] Selected: Push-up
-    echo.
-    goto choose_source
-)
-if "%exercise_choice%"=="5" (
-    set "exercise=superman"
-    echo.
-    echo    [OK] Selected: Superman
-    echo.
-    goto choose_source
-)
-if "%exercise_choice%"=="6" (
-    set "exercise=shoulder_press"
-    echo.
-    echo    [OK] Selected: Shoulder Press
-    echo.
-    goto choose_source
-)
-if "%exercise_choice%"=="7" (
-    set "exercise=dips"
-    echo.
-    echo    [OK] Selected: Chair Dips
-    echo.
-    goto choose_source
-)
-if "%exercise_choice%"=="8" (
-    set "exercise=plank"
-    echo.
-    echo    [OK] Selected: Plank
-    echo.
-    goto choose_source
-)
+if "%exercise_choice%"=="1" set "exercise=bicep_curl" & goto choose_source
+if "%exercise_choice%"=="2" set "exercise=squat" & goto choose_source
+if "%exercise_choice%"=="3" set "exercise=lunge" & goto choose_source
+if "%exercise_choice%"=="4" set "exercise=push_up" & goto choose_source
+if "%exercise_choice%"=="5" set "exercise=superman" & goto choose_source
+if "%exercise_choice%"=="6" set "exercise=shoulder_press" & goto choose_source
+if "%exercise_choice%"=="7" set "exercise=dips" & goto choose_source
+if "%exercise_choice%"=="8" set "exercise=plank" & goto choose_source
 
 echo    [!] Invalid choice. Please enter 1 to 8.
 goto ask_exercise
 
-:: -------------------------------------------
-:: Choose source
-:: -------------------------------------------
 :choose_source
+echo.
 echo    ------------------------------------
 echo       Choose Video Source
 echo    ------------------------------------
-echo       [1]  Webcam (live)
-echo       [2]  Video file
+echo       [1]  Webcam (Live Camera)
+echo       [2]  Video file (.mp4)
 echo    ------------------------------------
 echo.
 
 :ask_source
-set /p "source_choice=    Enter your choice (1 or 2): "
-
-if "%source_choice%"=="1" (
-    set "source=0"
-    echo.
-    echo    [OK] Using: Webcam
-    echo.
-    goto launch
-)
-if "%source_choice%"=="2" (
-    goto ask_file
-)
-
+set /p "source_choice=    Enter source (1 or 2): "
+if "%source_choice%"=="1" set "source=0" & goto launch_engine
+if "%source_choice%"=="2" goto ask_file
 echo    [!] Invalid choice. Please enter 1 or 2.
 goto ask_source
 
@@ -177,30 +117,23 @@ goto ask_source
 set /p "source=    Enter video file path: "
 if not exist "%source%" (
     echo    [!] File not found: %source%
-    echo    Please check the path and try again.
-    echo.
     goto ask_source
 )
-echo.
-echo    [OK] Using: %source%
-echo.
 
-:: -------------------------------------------
-:: Launch the engine
-:: -------------------------------------------
-:launch
+:launch_engine
+echo.
 echo    ====================================
-echo       Starting live analysis...
+echo       Starting live analysis for: %exercise%
 echo       Press 'q' or Esc to stop.
 echo    ====================================
 echo.
 
-py "%~dp0cv_engine.py" --source "%source%" --exercise %exercise%
+%PYTHON_EXE% "%~dp0cv_engine.py" --source "%source%" --exercise %exercise%
 
 echo.
 echo    ====================================
-echo       Session ended.
-echo       Thanks for using CV for Fit!
+echo       Session finished.
 echo    ====================================
 echo.
 pause
+exit /b 0

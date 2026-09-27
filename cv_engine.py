@@ -101,23 +101,236 @@ def _ensure_model() -> str:
 # ===================================================================
 # Audio Feedback
 # ===================================================================
-class AudioFeedback:
-    """Non-blocking voice coach running in a background thread."""
+VOICE_PHRASES = {
+    # Natural, realistic human coach counts every 2 reps (2, 4, 6, 8, 10...)
+    "rep_2": {"ar": "عدتان، ممتاز! حافظ على نفس الإيقاع والثبات.", "en": "Two reps down, great rhythm! Keep it steady."},
+    "rep_4": {"ar": "أربع عدات، عاش! تنفس بانتظام واصل التركيز.", "en": "Four reps, strong form! Breathe steadily and stay focused."},
+    "rep_6": {"ar": "ست عدات! أداء بطولي، استمر بنفس القوة والمدى الكامل.", "en": "Six reps! Excellent strength, maintain full range."},
+    "rep_8": {"ar": "ثماني عدات! ثبات رائع وعضلاتك مشدودة، واصل يا بطل!", "en": "Eight reps! Great stamina and clean execution, keep pushing!"},
+    "rep_10": {"ar": "عشر عدات كاملة! مجهود عظيم، واصل لآخر عدة!", "en": "Ten complete reps! Outstanding effort, finish strong!"},
+    "rep_even": {"ar": "{num} عدات ممتازة! أداء احترافي، كمل!", "en": "{num} clean reps! Professional form, keep going!"},
+    "rep_mistake": {"ar": "العدة السابقة غير مكتملة المدى الحركي، ركّز على العمق الصحيح.", "en": "Last rep had incomplete range, focus on reaching full depth."},
 
-    def __init__(self, enabled: bool = True):
+    # Welcome / Setup
+    "welcome_front": {
+        "ar": "أهلاً بك! يرجى الوقوف بمواجهة الكاميرا مباشرة، وابدأ عندما تكون مستعداً.",
+        "en": "Welcome! Please stand directly facing the camera, and begin when ready."
+    },
+    "welcome_side": {
+        "ar": "أهلاً بك! يرجى الوقوف بالجنب للكاميرا، وابدأ عندما تكون مستعداً.",
+        "en": "Welcome! Please stand sideways to the camera, and begin when ready."
+    },
+
+    # Plank
+    "plank_start": {"ar": "تم رصد البلانك! بدأ احتساب الثواني، اثبت!", "en": "Plank detected! Timer started. Keep holding."},
+    "plank_pause": {"ar": "انتبه! توقف المؤقت، اضبط استقامة الظهر لاستئناف العد.", "en": "Posture lost! Timer paused. Straighten your body to resume."},
+    "plank_10": {"ar": "ثبات ممتاز! 10 ثوانٍ مكتملة.", "en": "Great hold! 10 seconds completed."},
+    "plank_20": {"ar": "20 ثانية، واصل الثبات!", "en": "20 seconds, stay steady!"},
+    "plank_30": {"ar": "30 ثانية، مجهود بطولي!", "en": "30 seconds, heroic effort!"},
+    "plank_45": {"ar": "45 ثانية، اقتربت من الهدف!", "en": "45 seconds, almost there!"},
+    "plank_60": {"ar": "دقيقة كاملة! أداء أسطوري!", "en": "One full minute! Incredible hold!"},
+
+    # Session completion
+    "session_done_reps": {
+        "ar": "انتهت الجلسة بنجاح! أنجزت {total} تكراراً، مجهود رائع اليوم!",
+        "en": "Workout session completed! You finished a total of {total} reps. Excellent effort!"
+    },
+    "session_done_plank": {
+        "ar": "انتهت الجلسة بنجاح! حققت ثباتاً لمدة {total} ثانية، مجهود رائع!",
+        "en": "Workout session completed! You held the plank for {total} seconds. Excellent effort!"
+    }
+}
+
+COACH_TIPS_I18N = {
+    # Bicep Curl
+    "curl_higher": {
+        "ar": "ارفع يدك للأعلى أكثر لانقباض كامل لعضلة الباي.",
+        "en": "Curl higher! Bring your hand closer to your shoulder to fully contract the bicep."
+    },
+    "extend": {
+        "ar": "افرد ذراعك للأسفل بالكامل لتمديد العضلة.",
+        "en": "Lower the weight all the way down for a full stretch in your arm."
+    },
+    "lean": {
+        "ar": "قف مستقيماً وشد عضلات البطن، لا تمل للخلف.",
+        "en": "Stand up straight and engage your core. Don't lean back."
+    },
+    "elbow_swing": {
+        "ar": "ثبت كوعك بجانب خصرك وتجنب أرجحة الذراع.",
+        "en": "Keep your upper arm still. Don't swing."
+    },
+    "swing": {
+        "ar": "ثبت كوعك بجانب خصرك وتجنب أرجحة الذراع.",
+        "en": "Keep your upper arm still. Don't swing."
+    },
+    "elbow_pin": {
+        "ar": "ثبت كوعك بمحاذاة أضلاعك ولا تدعه يتحرك.",
+        "en": "Pin your elbow to your ribs and keep it stable."
+    },
+    "momentum": {
+        "ar": "تحكم بالوزن وتجنب استخدام قوة الاندفاع.",
+        "en": "You are using momentum. Slow down and control the movement."
+    },
+
+    # Squat
+    "depth": {
+        "ar": "انزل أكثر! اجعل الفخذين موازيين للأرض.",
+        "en": "Go a little deeper! Try to bring your thighs parallel to the ground."
+    },
+    "chest_up": {
+        "ar": "ارفع صدرك للأعلى وتجنب الميل للأمام.",
+        "en": "Keep your chest up. Avoid leaning too far forward."
+    },
+    "knee_travel": {
+        "ar": "وزع وزنك على الكعبين، لا تدفع ركبتك للأمام.",
+        "en": "Keep your weight on your heels. Don't let your knees travel too far forward."
+    },
+    "stand_full": {
+        "ar": "اصعد وافرد ركبتيك بالكامل عند نهاية العدة.",
+        "en": "Stand up completely and squeeze your glutes at the top."
+    },
+
+    # Shoulder Press
+    "shoulder_press_elbow": {
+        "ar": "أنزل أوزانك لمستوى الأذنين بزاوية 90 درجة.",
+        "en": "Do not drop your elbows too low. Keep them at 90 degrees."
+    },
+    "elbow_drop": {
+        "ar": "أنزل أوزانك لمستوى الأذنين بزاوية 90 درجة.",
+        "en": "Do not drop your elbows too low. Keep them at 90 degrees."
+    },
+    "shoulder_press_up": {
+        "ar": "ادفع الأوزان لأعلى وافرد ذراعيك فوق رأسك.",
+        "en": "Press all the way up! Extend your arms overhead."
+    },
+    "press_up": {
+        "ar": "ادفع الأوزان لأعلى وافرد ذراعيك فوق رأسك.",
+        "en": "Press all the way up! Extend your arms overhead."
+    },
+    "shoulder_press_sym": {
+        "ar": "حافظ على تماثل حركة الذراعين وارفعهما معاً.",
+        "en": "Keep your arms symmetrical. Press both weights together."
+    },
+    "asymmetry": {
+        "ar": "حافظ على تماثل حركة الذراعين وارفعهما معاً.",
+        "en": "Keep your arms symmetrical. Press both weights together."
+    },
+
+    # Plank
+    "hip_sag": {
+        "ar": "ارفع حوضك قليلاً، لا تدع أسفل ظهرك يرتخي.",
+        "en": "Lift your hips slightly! Don't let your lower back sag."
+    },
+    "hip_pike": {
+        "ar": "أنزل حوضك، اجعل جسمك مستقيماً تماماً.",
+        "en": "Lower your hips! Keep your body in a straight line."
+    },
+    "hip_arch": {
+        "ar": "حافظ على استقامة الظهر وعضلات البطن مشدودة.",
+        "en": "Straighten your core. Don't arch your back."
+    },
+    "knee_bend": {
+        "ar": "افرد ركبتيك وشد عضلات الفخذ.",
+        "en": "Keep your knees straight and engage your thighs."
+    },
+    "plank_posture": {
+        "ar": "اتخذ وضعية البلانك الأفقية على الأرض.",
+        "en": "Get into a horizontal plank position on the floor."
+    },
+
+    # Lunge
+    "knee_forward": {
+        "ar": "لا تدفع ركبتك الأمامية بعيداً، حافظ عليها فوق الكاحل.",
+        "en": "Do not push your front knee too far forward. Keep it above your ankle."
+    },
+    "lunge_depth": {
+        "ar": "انزل بركبتك الخلفية أكثر نحو الأرض.",
+        "en": "Step deeper into the lunge. Lower your back knee."
+    },
+
+    # Push-up
+    "pushup_depth": {
+        "ar": "انزل بصدرك أكثر نحو الأرض لمدى حركي كامل.",
+        "en": "Go lower! Try to bring your chest closer to the floor."
+    },
+
+    # Superman
+    "lift": {
+        "ar": "ارفع صدرك وفخذيك أعلى عن الأرض.",
+        "en": "Lift your chest and thighs higher off the ground."
+    },
+
+    # Dips
+    "dips_depth": {
+        "ar": "انزل أكثر واثنِ كوعيك بزاوية 90 درجة.",
+        "en": "Dip lower! Try to flex your elbows to 90 degrees."
+    },
+    "bench_dist": {
+        "ar": "حافظ على ظهرك قريباً من المقعد أو الكرسي.",
+        "en": "Keep your back close to the bench or chair."
+    },
+
+    # Orientation
+    "orientation": {
+        "ar": "يرجى تعديل وقفتك أمام الكاميرا حسب الإرشادات.",
+        "en": "Please adjust your stance facing the camera as instructed."
+    },
+    "orientation_front": {
+        "ar": "يرجى مواجهة الكاميرا مباشرة ليظهر جسمك بوضوح.",
+        "en": "Please face the camera directly so that both sides can be tracked."
+    },
+    "orientation_side": {
+        "ar": "يرجى الوقوف بالجنب للكاميرا لظهور تفاصيل الحركة.",
+        "en": "Please stand sideways to the camera so that your joints are visible from the side."
+    }
+}
+
+POSITIVE_PHRASES = {
+    "ar": [
+        "وضعية ممتازة! واصل.",
+        "تحكم رائع، استمر بثبات.",
+        "عاش! أداء احترافي.",
+        "استقامة ممتازة، كمل!",
+        "تنفيذ مثالي للحركة!"
+    ],
+    "en": [
+        "Perfect posture! Keep going.",
+        "Excellent control. Stay steady.",
+        "Great form! Keep pushing.",
+        "Looking solid. Nice alignment.",
+        "Perfect execution!"
+    ]
+}
+
+class AudioFeedback:
+    """Non-blocking voice coach running in a background thread with bilingual support."""
+
+    def __init__(self, enabled: bool = True, lang: str = "ar"):
         self._enabled = enabled
+        self.lang = lang
         self._queue: queue.Queue = queue.Queue()
         self._cooldowns: dict[str, float] = {}
         self._engine = None
+        self._lock = threading.Lock()
         if enabled:
             t = threading.Thread(target=self._worker, daemon=True)
             t.start()
 
+    def set_language(self, lang: str):
+        """Switch audio coach language dynamically."""
+        if lang in ("ar", "en"):
+            self.lang = lang
+            self.stop()
+            with self._lock:
+                try:
+                    if self._engine:
+                        del self._engine
+                except Exception:
+                    pass
+                self._engine = self._create_engine()
+
     def say(self, text: str, cooldown: float = 3.0, key: str = "") -> None:
-        """
-        Speak text with a per-key cooldown to avoid spam.
-        'key' groups related messages (e.g. 'elbow_swing').
-        """
+        """Speak raw text with a per-key cooldown."""
         if not self._enabled:
             return
         k = key or text
@@ -125,7 +338,6 @@ class AudioFeedback:
         if now - self._cooldowns.get(k, 0) < cooldown:
             return
         self._cooldowns[k] = now
-        # Drop old if backed up
         while self._queue.qsize() > 2:
             try:
                 self._queue.get_nowait()
@@ -133,56 +345,97 @@ class AudioFeedback:
                 break
         self._queue.put(text)
 
+    def say_phrase(self, phrase_key: str, cooldown: float = 3.0, key: str = "", **kwargs) -> None:
+        """Speak a localized phrase from VOICE_PHRASES based on current language."""
+        phrase_data = VOICE_PHRASES.get(phrase_key, {})
+        text = phrase_data.get(self.lang) or phrase_data.get("en") or phrase_key
+        if kwargs:
+            try:
+                text = text.format(**kwargs)
+            except Exception:
+                pass
+        self.say(text, cooldown=cooldown, key=key or phrase_key)
+
     def stop(self) -> None:
         """Stop any current speech and clear queue immediately."""
         if not self._enabled:
             return
-        # Clear the queue
         while not self._queue.empty():
             try:
                 self._queue.get_nowait()
             except queue.Empty:
                 break
-        # Call stop on the pyttsx3 engine
-        if self._engine is not None:
-            try:
-                self._engine.stop()
-            except Exception:
-                pass
+        with self._lock:
+            if self._engine is not None:
+                try:
+                    self._engine.stop()
+                except Exception:
+                    pass
 
     def shutdown(self):
         self.stop()
         self._queue.put(None)
 
+    def _create_engine(self):
+        try:
+            eng = pyttsx3.init()
+            eng.setProperty("rate", 165)
+            voices = eng.getProperty("voices")
+            
+            # Select language voice if available
+            chosen = None
+            if self.lang == "ar":
+                for v in voices:
+                    v_name = v.name.lower()
+                    if "arabic" in v_name or "hoda" in v_name or "naayf" in v_name or "maged" in v_name or "tarik" in v_name:
+                        chosen = v.id
+                        break
+            if not chosen:
+                for v in voices:
+                    if "zira" in v.name.lower() or "female" in v.name.lower() or "david" in v.name.lower():
+                        chosen = v.id
+                        break
+            if chosen:
+                eng.setProperty("voice", chosen)
+            return eng
+        except Exception:
+            return None
+
     def _worker(self):
         if _HAS_TTS:
             try:
-                # Initialize COM for the background thread on Windows
                 import pythoncom
                 pythoncom.CoInitialize()
             except Exception:
                 pass
 
-            try:
-                engine = pyttsx3.init()
-                engine.setProperty("rate", 170)
-                voices = engine.getProperty("voices")
-                for v in voices:
-                    if "zira" in v.name.lower() or "female" in v.name.lower():
-                        engine.setProperty("voice", v.id)
-                        break
-                self._engine = engine
-            except Exception:
+            with self._lock:
+                self._engine = self._create_engine()
+
+            if self._engine is None:
                 self._worker_beep()
                 return
 
             while True:
                 try:
-                    text = self._queue.get(timeout=1)
+                    text = self._queue.get(timeout=0.5)
                     if text is None:
                         break
-                    engine.say(text)
-                    engine.runAndWait()
+                    
+                    try:
+                        self._engine.say(text)
+                        self._engine.runAndWait()
+                    except Exception:
+                        pass
+
+                    # Cleanly refresh engine instance after utterance so SAPI5 is never broken
+                    with self._lock:
+                        try:
+                            del self._engine
+                        except Exception:
+                            pass
+                        self._engine = self._create_engine()
+
                 except queue.Empty:
                     pass
                 except Exception:
@@ -242,6 +495,9 @@ class RepetitionState:
     min_angle: float = 180.0
     max_angle: float = 0.0
     shoulder_angles: list = field(default_factory=list)  # Track shoulder stability
+    hold_seconds: float = 0.0                            # For Plank: seconds held with verified form
+    is_holding: bool = False                             # For Plank: currently in correct posture
+    progress_pct: float = 0.0                            # 0 to 100% progress for current rep / hold
 
 
 # ===================================================================
@@ -395,12 +651,39 @@ class PoseAnalyzer:
         min_tracking_confidence: float = 0.5,
         dtw_threshold: float = 25.0,
         enable_audio: bool = True,
+        lang: str = "ar",
     ):
         self._det_conf = min_detection_confidence
         self._trk_conf = min_tracking_confidence
         self.dtw_threshold = dtw_threshold
+        self.lang = lang
+        self._last_ts_ms = -1
         self._landmarker: Optional[PoseLandmarker] = None
-        self.audio = AudioFeedback(enabled=enable_audio)
+        self.audio = AudioFeedback(enabled=enable_audio, lang=lang)
+
+    def set_language(self, lang: str):
+        """Update language for both analyzer and its audio engine."""
+        if lang in ("ar", "en"):
+            self.lang = lang
+            self.audio.set_language(lang)
+
+    def get_tip_text(self, tip: tuple[str, str], lang: Optional[str] = None) -> str:
+        """Translate tip tuple (text, key) according to given or default language."""
+        target_lang = lang or self.lang
+        raw_text, key = tip
+        if key in COACH_TIPS_I18N:
+            return COACH_TIPS_I18N[key].get(target_lang) or COACH_TIPS_I18N[key].get("en") or raw_text
+        return raw_text
+
+    def get_coaching_dict(self, tip: tuple[str, str]) -> dict[str, str]:
+        """Return dict with both Arabic and English coaching tips."""
+        raw_text, key = tip
+        info = COACH_TIPS_I18N.get(key, {})
+        return {
+            "key": key,
+            "ar": info.get("ar", raw_text),
+            "en": info.get("en", raw_text),
+        }
 
     # ------------------------------------------------------------------
     def _get_landmarker(self) -> PoseLandmarker:
@@ -428,13 +711,23 @@ class PoseAnalyzer:
     def extract_landmarks(self, frame: np.ndarray, ts_ms: int) -> Optional[list]:
         if frame is None or frame.size == 0:
             return None
+
+        # Guarantee strict monotonically increasing timestamp required by MediaPipe RunningMode.VIDEO
+        if ts_ms <= self._last_ts_ms:
+            ts_ms = self._last_ts_ms + 1
+        self._last_ts_ms = ts_ms
+
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        result = self._get_landmarker().detect_for_video(
-            mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb), ts_ms
-        )
-        if not result.pose_landmarks:
+        try:
+            result = self._get_landmarker().detect_for_video(
+                mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb), ts_ms
+            )
+            if not result.pose_landmarks:
+                return None
+            return result.pose_landmarks[0]
+        except Exception as e:
+            logger.warning("MediaPipe inference error: %s", e)
             return None
-        return result.pose_landmarks[0]
 
     # ------------------------------------------------------------------
     # 2D angle (more accurate from side view)
@@ -777,15 +1070,51 @@ class PoseAnalyzer:
         self, landmarks: list, angles: dict[str, float],
         side: str, rep_state: RepetitionState,
     ) -> list[tuple[str, str]]:
-        """Analyse plank form from side view."""
+        """Analyse plank form from side view and verify posture."""
         tips: list[tuple[str, str]] = []
         hip_angle = angles.get("hip", 175)
+        knee_angle = angles.get("knee", 175)
+
+        if side == "left":
+            sh = landmarks[LM["L_SHOULDER"]]
+            hp = landmarks[LM["L_HIP"]]
+            kn = landmarks[LM["L_KNEE"]]
+            an = landmarks[LM["L_ANKLE"]]
+        else:
+            sh = landmarks[LM["R_SHOULDER"]]
+            hp = landmarks[LM["R_HIP"]]
+            kn = landmarks[LM["R_KNEE"]]
+            an = landmarks[LM["R_ANKLE"]]
+
+        # Check if user is horizontal on the floor
+        vertical_span = abs(sh.y - an.y)
+        if vertical_span > 0.40:
+            tips.append(("Get into a horizontal plank position on the floor.", "plank_posture"))
+            rep_state.is_holding = False
+            return tips
+
+        is_sagging = False
+        is_piked = False
 
         if hip_angle < 155:
-            tips.append(("Keep your hips straight. Avoid sagging or spiking your hips.", "hip_sag"))
+            mid_y = (sh.y + kn.y) / 2.0
+            if hp.y > mid_y:
+                tips.append(("Lift your hips slightly! Don't let your lower back sag.", "hip_sag"))
+                is_sagging = True
+            else:
+                tips.append(("Lower your hips! Keep your body in a straight line.", "hip_pike"))
+                is_piked = True
         elif hip_angle > 185:
-            tips.append(("Bring your hips down. Your body should form a straight line.", "hip_spike"))
+            tips.append(("Straighten your core. Don't arch your back.", "hip_arch"))
+            is_sagging = True
 
+        is_knee_bent = False
+        if knee_angle < 145:
+            tips.append(("Keep your knees straight and engage your thighs.", "knee_bend"))
+            is_knee_bent = True
+
+        # Valid hold only when posture is clean
+        rep_state.is_holding = not (is_sagging or is_piked or is_knee_bent)
         return tips
 
     # ------------------------------------------------------------------
@@ -793,28 +1122,39 @@ class PoseAnalyzer:
     # ------------------------------------------------------------------
     @staticmethod
     def evaluate_form(
-        user_seq: np.ndarray, ref_seq: np.ndarray, threshold: float = 25.0,
+        user_seq: np.ndarray, ref_seq: np.ndarray, threshold: float = 25.0, lang: str = "ar",
     ) -> FormEvaluation:
         user = np.atleast_2d(np.asarray(user_seq, dtype=np.float64))
         ref = np.atleast_2d(np.asarray(ref_seq, dtype=np.float64))
         if user.shape[0] < 2 or ref.shape[0] < 2:
-            return FormEvaluation(float("inf"), 0, False, threshold, "Not enough movement frames captured.")
+            msg = "Not enough movement frames captured." if lang == "en" else "لم يتم التقاط كادرات كافية للحركة."
+            return FormEvaluation(float("inf"), 0, False, threshold, msg)
 
         dist, _ = fastdtw(user, ref, dist=euclidean)
-        # Normalize by max length AND by square root of features to represent average degrees deviation
+        # Normalize by max length AND by square root of features to represent average degrees deviation per joint
         norm = dist / (max(user.shape[0], ref.shape[0]) * np.sqrt(user.shape[1]))
         
-        # Softer exponential decay: average 10 degrees difference maps to ~80% score
-        score = float(np.clip(100.0 * np.exp(-0.022 * norm), 0, 100))
+        # Transparent, explainable biomechanical scoring:
+        # Every 1 deg of average joint deviation across the cycle deducts 1.6% from 100%:
+        # Average deviation of 3-5 deg gives 92% - 95% (Flawless execution)
+        # Average deviation of 8-10 deg gives 84% - 87% (Optimal execution)
+        # Average deviation of 15 deg gives 76% (Acceptable execution)
+        # Average deviation of 25 deg gives 60% (Pass threshold)
+        # Average deviation > 35 deg drops below 50%
+        score = float(np.clip(100.0 - 1.6 * norm, 10.0, 100.0))
         ok = score >= 60.0
 
         if score >= 82:
-            fb = f"Perfect form! Score {score:.0f}. Keep doing exactly like that."
-        elif score >= 55:
-            fb = f"That rep was decent, score {score:.0f}, but try to stabilize and control your tempo more."
+            fb_ar = f"أداء متقن وممتاز! توافق حركي عالي بدرجة {score:.0f}%."
+            fb_en = f"Optimal form! Score {score:.0f}%. High kinematic alignment."
+        elif score >= 60:
+            fb_ar = f"أداء جيد جداً بدرجة {score:.0f}%، حافظ على ثبات المفصل والتحكم في السرعة."
+            fb_en = f"Good form, score {score:.0f}%, keep joints stabilized."
         else:
-            fb = f"Form needs correction, score {score:.0f}. Focus on full range of motion and slow down."
+            fb_ar = f"يحتاج لتصحيح المسار، الدرجة {score:.0f}%. ركز على المدى الحركي الكامل وتثبيت الجذع."
+            fb_en = f"Form needs correction, score {score:.0f}%. Focus on full range of motion."
 
+        fb = fb_ar if lang == "ar" else fb_en
         return FormEvaluation(norm, score, ok, threshold, fb)
 
     # ------------------------------------------------------------------
@@ -823,33 +1163,47 @@ class PoseAnalyzer:
     def _update_rep(
         self, state: RepetitionState, angle: float,
         angles: dict, config: dict, ref_seq, evals: list,
-        exercise_type: ExerciseType,
+        exercise_type: ExerciseType, dt_sec: float = 0.033,
     ) -> bool:
         """Returns True if a new rep was just completed."""
         if exercise_type == ExerciseType.PLANK:
-            # Plank hold tracking: 5 seconds of correct posture (150 frames @ 30fps) = 1 rep
-            hip = angles.get("hip", 175)
-            if 155 <= hip <= 185:
-                if not hasattr(state, 'plank_frames'):
-                    state.plank_frames = 0
-                state.plank_frames += 1
-                if state.plank_frames >= 150:
-                    state.rep_count += 1
-                    state.plank_frames = 0
-                    return True
+            if state.is_holding:
+                was_holding = (state.phase == "HOLDING")
+                state.phase = "HOLDING"
+                state.hold_seconds += dt_sec
+                # Smooth progress percentage based on 60-second target
+                state.progress_pct = float(np.clip((state.hold_seconds / 60.0) * 100.0, 0.0, 100.0))
+                state.rep_count = int(state.hold_seconds)
+
+                sec = int(state.hold_seconds)
+                if sec > 0 and sec % 10 == 0 and not getattr(state, f"_ann_{sec}", False):
+                    setattr(state, f"_ann_{sec}", True)
+                    if f"plank_{sec}" in VOICE_PHRASES:
+                        self.audio.say_phrase(f"plank_{sec}", cooldown=3.0, key=f"plank_{sec}")
+                    else:
+                        self.audio.say_phrase("plank_10", cooldown=3.0, key="plank_time", sec=sec)
+                elif not was_holding and state.hold_seconds < 1.0:
+                    self.audio.say_phrase("plank_start", cooldown=4.0, key="plank_start")
             else:
-                if hasattr(state, 'plank_frames'):
-                    state.plank_frames = 0
+                if state.phase == "HOLDING":
+                    self.audio.say_phrase("plank_pause", cooldown=3.5, key="plank_pause")
+                state.phase = "PAUSED"
             return False
 
         start = config["start"]
         bottom = config["bottom"]
         vec = list(angles.values())
+        range_deg = abs(start - bottom) or 1.0
 
         state.max_angle = max(state.max_angle, angle)
 
+        # Smooth, continuous Range of Motion depth (0% at starting point, 100% at peak contraction/bottom depth)
+        target_rom = float(np.clip(((start - angle) / range_deg) * 100.0, 0.0, 100.0))
+        # Continuous exponential smoothing for fluid visual feedback without jerky 50% split halves
+        state.progress_pct = float(np.clip(0.60 * state.progress_pct + 0.40 * target_rom, 0.0, 100.0))
+
         if state.phase == "idle":
-            if angle < start:
+            if angle < start - 5:
                 state.phase = "descending"
                 state.angle_sequence = [vec]
                 state.min_angle = angle
@@ -864,13 +1218,13 @@ class PoseAnalyzer:
 
         elif state.phase == "ascending":
             state.angle_sequence.append(vec)
-            if angle >= start:
+            if angle >= start - 4:
                 state.rep_count += 1
                 state.phase = "idle"
 
                 if ref_seq is not None and len(state.angle_sequence) > 3:
                     ev = self.evaluate_form(
-                        np.array(state.angle_sequence), ref_seq, self.dtw_threshold,
+                        np.array(state.angle_sequence), ref_seq, self.dtw_threshold, lang=self.lang,
                     )
                     evals.append(ev)
 
@@ -924,9 +1278,9 @@ class PoseAnalyzer:
 
         is_front = exercise_type in (ExerciseType.SHOULDER_PRESS,)
         if is_front:
-            self.audio.say("Welcome to your training session! Please stand directly facing the camera with your full body visible, and begin the exercise when you are ready.", cooldown=0)
+            self.audio.say_phrase("welcome_front", cooldown=0)
         else:
-            self.audio.say("Welcome to your training session! Please stand sideways to the camera so that your side profile is visible, and begin the exercise when you are ready.", cooldown=0)
+            self.audio.say_phrase("welcome_side", cooldown=0)
 
         try:
             while cap.isOpened():
@@ -966,26 +1320,36 @@ class PoseAnalyzer:
                         primary = config["primary"]
                         p_angle = angles.get(primary, 180.0)
 
-                        # Update rep counter
+                        # For Plank: evaluate posture on every frame so is_holding is real-time
+                        if exercise_type == ExerciseType.PLANK:
+                            tips = self.coach_plank(lm, angles, active_side, rep_state)
+                            if tips:
+                                tip_text = self.get_tip_text(tips[0])
+                                tip_display_text = tip_text
+                                self.audio.say(tip_text, cooldown=4.0, key=tips[0][1])
+                            else:
+                                tip_display_text = ""
+
+                        # Update rep counter / hold seconds
                         new_rep = self._update_rep(
                             rep_state, p_angle, angles,
-                            config, reference_sequence, evals, exercise_type
+                            config, reference_sequence, evals, exercise_type,
+                            dt_sec=1.0 / fps
                         )
 
                         if new_rep:
                             rep_num = rep_state.rep_count
                             latest_eval = evals[-1] if evals else None
                             
-                            if latest_eval:
-                                score = latest_eval.form_score
-                                if score >= 82:
-                                    self.audio.say(f"Rep {rep_num} completed. Excellent form! Keep it up.", cooldown=0.1, key="count")
-                                elif score >= 55:
-                                    self.audio.say(f"Rep {rep_num} done. Nice effort, but try to control your speed and stabilize your movement a bit more.", cooldown=0.1, key="count")
+                            # Speak realistic encouraging count only after every 2 reps (2, 4, 6, 8, 10...)
+                            if rep_num % 2 == 0:
+                                if rep_num in (2, 4, 6, 8, 10):
+                                    self.audio.say_phrase(f"rep_{rep_num}", cooldown=0.1, key="count")
                                 else:
-                                    self.audio.say(f"Rep {rep_num} recorded. However, your form needs correction. Please slow down and focus on control.", cooldown=0.1, key="count")
-                            else:
-                                self.audio.say(f"Rep {rep_num} completed.", cooldown=0.1, key="count")
+                                    self.audio.say_phrase("rep_even", cooldown=0.1, key="count", num=rep_num)
+                            elif latest_eval and latest_eval.form_score < 55:
+                                # Speak immediate correction if odd rep had flawed execution
+                                self.audio.say_phrase("rep_mistake", cooldown=2.0, key="mistake_rep")
 
                         # --- Contextual coaching (every N frames) ---
                         if frame_n - last_coach_frame >= coach_interval:
@@ -1006,35 +1370,30 @@ class PoseAnalyzer:
                             elif exercise_type == ExerciseType.DIPS:
                                 tips = self.coach_dips(lm, angles, active_side, rep_state)
                             elif exercise_type == ExerciseType.PLANK:
-                                tips = self.coach_plank(lm, angles, active_side, rep_state)
+                                pass  # Evaluated continuously above
                             else:
                                 tips = []
 
                             # Orientation warning
                             if exercise_type in (ExerciseType.SHOULDER_PRESS,):
                                 if orientation == "side":
-                                    tips.append(("Please face the camera directly so that both of your knees and hips can be tracked from the front.", "orientation"))
+                                    tips.append(("Please face the camera directly so that both of your knees and hips can be tracked from the front.", "orientation_front"))
                             else:
                                 if orientation == "front":
-                                    tips.append(("Please stand sideways to the camera so that your arm and joints are visible from the side.", "orientation"))
+                                    tips.append(("Please stand sideways to the camera so that your arm and joints are visible from the side.", "orientation_side"))
 
                             # Speak the most important tip
                             if tips:
                                 msg, key = tips[0]
-                                self.audio.say(msg, cooldown=5.0, key=key)
-                                tip_display_text = msg
+                                tip_text = self.get_tip_text((msg, key))
+                                self.audio.say(tip_text, cooldown=5.0, key=key)
+                                tip_display_text = tip_text
                             else:
                                 tip_display_text = ""
                                 # If the form is correct during the rep, speak positive reinforcement
                                 if rep_state.phase in ("descending", "ascending"):
-                                    positives = [
-                                        "Perfect posture! Keep going.",
-                                        "Excellent control. Stay steady.",
-                                        "Great form! Keep pushing.",
-                                        "Looking solid. Nice alignment.",
-                                        "Perfect execution!"
-                                    ]
-                                    pos_msg = positives[frame_n % len(positives)]
+                                    pos_list = POSITIVE_PHRASES.get(self.lang, POSITIVE_PHRASES["en"])
+                                    pos_msg = pos_list[frame_n % len(pos_list)]
                                     self.audio.say(pos_msg, cooldown=7.0, key="positive_reinforcement")
 
                     # Draw skeleton
@@ -1080,8 +1439,12 @@ class PoseAnalyzer:
                 writer.release()
             if show_preview:
                 cv2.destroyAllWindows()
-            total = rep_state.rep_count
-            self.audio.say(f"Workout session completed! You have finished a total of {total} repetitions. Excellent effort today, keep up the good work!", cooldown=0)
+            if exercise_type == ExerciseType.PLANK:
+                total_sec = int(rep_state.hold_seconds)
+                self.audio.say_phrase("session_done_plank", cooldown=0, total=total_sec)
+            else:
+                total = rep_state.rep_count
+                self.audio.say_phrase("session_done_reps", cooldown=0, total=total)
             time.sleep(3.5)
             self.release()
 
@@ -1108,7 +1471,7 @@ class PoseAnalyzer:
                 ("", False),
                 ("Press SPACE to start", True),
             ]
-            self.audio.say(f"Before we begin, please stand directly facing the camera so it can track both of your sides. Press the spacebar on your keyboard when you are ready to start.", cooldown=0)
+            self.audio.say_phrase("welcome_front", cooldown=0)
         else:
             lines = [
                 (f"{title_text} SETUP", True),
@@ -1123,7 +1486,7 @@ class PoseAnalyzer:
                 ("", False),
                 ("Press SPACE to start", True),
             ]
-            self.audio.say(f"Before we begin, please stand sideways to the camera so that your side profile is visible. Press the spacebar on your keyboard when you are ready to start.", cooldown=0)
+            self.audio.say_phrase("welcome_side", cooldown=0)
 
         while True:
             ret, frame = cap.read()
@@ -1199,7 +1562,7 @@ class PoseAnalyzer:
 
         # Panel
         ov = frame.copy()
-        panel_h = 210 if tip_text else 165
+        panel_h = 240 if tip_text else 195
         cv2.rectangle(ov, (8, 8), (420, 8 + panel_h), (15, 15, 15), -1)
         cv2.addWeighted(ov, 0.72, frame, 0.28, 0, frame)
 
@@ -1230,22 +1593,50 @@ class PoseAnalyzer:
 
         y += 4
 
-        # Rep counter (large)
+        # Rep / Hold counter (large)
+        if exercise_type == ExerciseType.PLANK:
+            mins = int(rep_state.hold_seconds) // 60
+            secs = int(rep_state.hold_seconds) % 60
+            counter_str = f"Hold: {mins:02d}:{secs:02d}"
+            counter_color = green if rep_state.is_holding else yellow
+        else:
+            counter_str = f"Reps: {rep_state.rep_count}"
+            counter_color = green
+
         cv2.putText(
-            frame, f"Reps: {rep_state.rep_count}",
-            (16, y), font, 0.85, green, 2, cv2.LINE_AA,
+            frame, counter_str,
+            (16, y), font, 0.85, counter_color, 2, cv2.LINE_AA,
         )
 
-        # Phase
+        # Phase / Status
         phase = rep_state.phase
-        if phase == "descending":
+        if exercise_type == ExerciseType.PLANK:
+            if rep_state.is_holding:
+                pcolor, plabel = green, "HOLDING"
+            else:
+                pcolor, plabel = yellow, "PAUSED"
+        elif phase == "descending":
             pcolor, plabel = yellow, "WORKING"
         elif phase == "ascending":
             pcolor, plabel = cyan, "RETURNING"
         else:
             pcolor, plabel = gray, "READY"
-        cv2.putText(frame, plabel, (220, y), font, 0.6, pcolor, 1, cv2.LINE_AA)
-        y += 28
+        cv2.putText(frame, plabel, (230, y), font, 0.6, pcolor, 1, cv2.LINE_AA)
+        y += 24
+
+        # Workout Progress Bar ("زي بار للتمرينه والعدات")
+        bar_w = 340
+        bar_h = 10
+        cv2.rectangle(frame, (16, y), (16 + bar_w, y + bar_h), (45, 45, 45), -1)
+        fill_w = int(bar_w * (np.clip(rep_state.progress_pct, 0.0, 100.0) / 100.0))
+        bar_c = green if (exercise_type == ExerciseType.PLANK and rep_state.is_holding) or rep_state.progress_pct >= 95 else cyan
+        if fill_w > 0:
+            cv2.rectangle(frame, (16, y), (16 + fill_w, y + bar_h), bar_c, -1)
+        cv2.rectangle(frame, (16, y), (16 + bar_w, y + bar_h), (80, 80, 80), 1)
+        # Percentage text
+        pct_text = f"{int(rep_state.progress_pct)}%"
+        cv2.putText(frame, pct_text, (16 + bar_w + 8, y + 9), font, 0.4, (200, 200, 200), 1, cv2.LINE_AA)
+        y += 22
 
         # Orientation check
         if is_front:
@@ -1262,7 +1653,6 @@ class PoseAnalyzer:
 
         # Coaching tip
         if tip_text:
-            # Draw with a slight highlight background
             cv2.putText(frame, tip_text[:52], (16, y), font, 0.48, (100, 180, 255), 1, cv2.LINE_AA)
             y += 22
 
@@ -1275,8 +1665,11 @@ class PoseAnalyzer:
                 (16, y), font, 0.5, sc_c, 1, cv2.LINE_AA,
             )
 
-        # Big rep counter bottom-right
-        total_txt = str(rep_state.rep_count)
+        # Big rep / hold counter bottom-right
+        if exercise_type == ExerciseType.PLANK:
+            total_txt = f"{int(rep_state.hold_seconds)}s"
+        else:
+            total_txt = str(rep_state.rep_count)
         (tw, th), _ = cv2.getTextSize(total_txt, font, 2.5, 4)
         tx = w - tw - 30
         ty = h - 30
@@ -1288,13 +1681,79 @@ class PoseAnalyzer:
 # Synthetic reference
 # ===================================================================
 def generate_synthetic_reference(ex: ExerciseType, n: int = 60) -> np.ndarray:
-    t = np.linspace(0, np.pi, n)
-    if ex in (ExerciseType.BICEP_CURL, ExerciseType.SUPERMAN, ExerciseType.SHOULDER_PRESS):
-        # 2 Features
-        return np.column_stack([90 + 60 * np.abs(np.cos(t)), 45 + 40 * np.abs(np.cos(t))])
+    """
+    Generate an anatomically accurate biomechanical reference trajectory for DTW comparison.
+    Cosine bell curve represents a smooth, controlled repetition (concentric + eccentric).
+    t ranges from 0 to 2*pi so that bell starts at 1, drops to 0 at mid-rep (depth), and returns to 1.
+    """
+    t = np.linspace(0, 2 * np.pi, n)
+    bell = 0.5 + 0.5 * np.cos(t)  # 1.0 at start, 0.0 at peak contraction/bottom, 1.0 at finish
+
+    if ex == ExerciseType.BICEP_CURL:
+        # Features: [elbow, shoulder]
+        # Elbow curls from 150 deg down to 55 deg and returns to 150 deg
+        elbow = 55.0 + 95.0 * bell
+        # Shoulder remains stable and pinned to torso at ~15 deg
+        shoulder = np.full(n, 15.0)
+        return np.column_stack([elbow, shoulder])
+
+    elif ex == ExerciseType.SQUAT:
+        # Features: [hip, knee, ankle]
+        # Hip bends from 170 deg standing down to 90 deg and returns
+        hip = 90.0 + 80.0 * bell
+        # Knee flexes from 165 deg down to 100 deg (parallel) and returns
+        knee = 100.0 + 65.0 * bell
+        # Ankle dorsiflexes from 85 deg down to 75 deg and returns
+        ankle = 75.0 + 10.0 * bell
+        return np.column_stack([hip, knee, ankle])
+
+    elif ex == ExerciseType.LUNGE:
+        # Features: [hip, knee, ankle]
+        hip = 100.0 + 65.0 * bell
+        knee = 95.0 + 70.0 * bell
+        ankle = 75.0 + 10.0 * bell
+        return np.column_stack([hip, knee, ankle])
+
+    elif ex == ExerciseType.PUSH_UP:
+        # Features: [elbow, shoulder, hip]
+        # Elbow flexes from 160 deg (extended) down to 85 deg (chest near floor) and returns
+        elbow = 85.0 + 75.0 * bell
+        # Shoulder flexes from 75 deg down to 45 deg and returns
+        shoulder = 45.0 + 30.0 * bell
+        # Hip remains rigid in plank posture at ~172 deg
+        hip = np.full(n, 172.0)
+        return np.column_stack([elbow, shoulder, hip])
+
+    elif ex == ExerciseType.SHOULDER_PRESS:
+        # Features: [elbow, shoulder]
+        # Start at ears (elbow ~95 deg), press overhead (elbow ~165 deg), and return to ears
+        inv_bell = 0.5 - 0.5 * np.cos(t)  # 0 at start, 1 at overhead peak, 0 at finish
+        elbow = 95.0 + 70.0 * inv_bell
+        shoulder = 90.0 + 65.0 * inv_bell
+        return np.column_stack([elbow, shoulder])
+
+    elif ex == ExerciseType.DIPS:
+        # Features: [elbow, shoulder, hip]
+        elbow = 90.0 + 65.0 * bell
+        shoulder = 30.0 + 30.0 * (1.0 - bell)
+        hip = np.full(n, 95.0)
+        return np.column_stack([elbow, shoulder, hip])
+
+    elif ex == ExerciseType.SUPERMAN:
+        # Features: [hip, shoulder]
+        hip = 162.0 + 16.0 * bell
+        shoulder = 155.0 + 20.0 * bell
+        return np.column_stack([hip, shoulder])
+
+    elif ex == ExerciseType.PLANK:
+        # Features: [hip, shoulder, knee]
+        hip = np.full(n, 175.0)
+        shoulder = np.full(n, 90.0)
+        knee = np.full(n, 175.0)
+        return np.column_stack([hip, shoulder, knee])
+
     else:
-        # 3 Features
-        return np.column_stack([100 + 60 * np.abs(np.cos(t)), 90 + 70 * np.abs(np.cos(t)), 80 + 30 * np.abs(np.cos(t))])
+        return np.column_stack([60.0 + 90.0 * bell, np.full(n, 20.0)])
 
 
 # ===================================================================
@@ -1310,6 +1769,7 @@ def main():
         default="bicep_curl"
     )
     p.add_argument("--threshold", type=float, default=25.0)
+    p.add_argument("--lang", choices=["ar", "en"], default="ar", help="Voice coach language (ar or en)")
     p.add_argument("--output", default=None)
     p.add_argument("--no-preview", action="store_true")
     p.add_argument("--no-audio", action="store_true")
@@ -1322,7 +1782,7 @@ def main():
 
     ex = ExerciseType(args.exercise)
     ref = generate_synthetic_reference(ex)
-    analyzer = PoseAnalyzer(dtw_threshold=args.threshold, enable_audio=not args.no_audio)
+    analyzer = PoseAnalyzer(dtw_threshold=args.threshold, enable_audio=not args.no_audio, lang=args.lang)
 
     try:
         result = analyzer.process_stream(

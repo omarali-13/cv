@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CV for Fit — نظام التحليل الحركي والمدرب الذكي</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Alexandria & Readex Pro (Arabic) + Chakra Petch (Numbers/Telemetry) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&family=Chakra+Petch:wght@500;600;700&family=Readex+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Alexandria', 'Readex Pro', 'sans-serif'],
+            mono: ['Chakra Petch', 'monospace'],
+          },
+          colors: {
+            app: {
+              void: '#0B0F19',
+              base: '#0F172A',
+              card: '#1E293B',
+              surface: '#243044',
+              border: '#334155',
+              borderLight: '#475569',
+              emerald: '#10B981',
+              emeraldDark: '#059669',
+              emeraldLight: '#34D399',
+              cyan: '#0EA5E9',
+              cyanLight: '#38BDF8',
+              amber: '#F59E0B',
+              rose: '#F43F5E',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #0B0F19;
+      color: #F1F5F9;
+      font-family: 'Alexandria', 'Readex Pro', sans-serif;
+      overflow-x: hidden;
+    }
+    .mono-num {
+      font-family: 'Chakra Petch', monospace;
+    }
+    /* Calm subtle panel */
+    .calm-card {
+      background: #1E293B;
+      border: 1px solid #334155;
+    }
+    /* Smooth progress bar */
+    .smooth-bar {
+      transition: width 0.08s linear;
+    }
+    /* Rep pulse animation */
+    @keyframes repPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); color: #34D399; }
+      100% { transform: scale(1); }
+    }
+    .rep-animate {
+      animation: repPulse 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    /* Custom clean scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0B0F19;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #10B981;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-app-emerald selection:text-white">
+
+  <!-- ================================================================= -->
+  <!-- TOP APP BAR -->
+  <!-- ================================================================= -->
+  <header class="border-b border-app-border bg-app-base/90 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-app-card border border-app-emerald/40 flex items-center justify-center text-app-emerald shadow-sm">
+          <i data-lucide="activity" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-extrabold text-lg sm:text-xl text-white tracking-tight">CV for Fit</span>
+            <span class="mono-num text-[11px] uppercase bg-app-emerald/15 text-app-emeraldLight font-bold px-2 py-0.5 rounded border border-app-emerald/30">
+              AI VISION
+            </span>
+          </div>
+          <p id="appSubtitle" class="text-xs text-gray-400 font-medium">مشروع التخرج — نظام التحليل الحركي والمدرب الذكي</p>
+        </div>
+      </div>
+
+      <!-- Mode Switcher Tabs -->
+      <div class="hidden md:flex items-center bg-app-void p-1 rounded-xl border border-app-border">
+        <button id="modeLiveBtn" onclick="switchMode('live')"
+                class="flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-app-emerald text-white shadow-sm">
+          <i data-lucide="video" class="w-4 h-4"></i>
+          <span id="tabLiveText">الكاميرا الحية (Live Camera)</span>
+        </button>
+        <button id="modeLabBtn" onclick="switchMode('lab')"
+                class="flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white">
+          <i data-lucide="film" class="w-4 h-4"></i>
+          <span id="tabLabText">مختبر تحليل الفيديو (Video Lab)</span>
+        </button>
+      </div>
+
+      <!-- Right Controls: Language & Audio & System Status -->
+      <div class="flex items-center gap-2.5">
+        
+        <!-- Language Switcher Pill -->
+        <div class="flex items-center bg-app-void rounded-lg border border-app-border p-0.5">
+          <button id="langArBtn" onclick="setAppLanguage('ar')"
+                  class="px-2.5 py-1 text-xs font-bold rounded transition-all bg-app-surface text-app-emeraldLight">
+            عربي
+          </button>
+          <button id="langEnBtn" onclick="setAppLanguage('en')"
+                  class="px-2.5 py-1 text-xs font-bold rounded transition-all text-gray-400 hover:text-white">
+            EN
+          </button>
+        </div>
+
+        <!-- Voice Assistant Mute/Unmute -->
+        <button id="toggleAudioBtn" onclick="toggleVoiceAudio()" title="المساعد الصوتي"
+                class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-app-card hover:bg-app-surface text-gray-200 border border-app-border text-xs font-medium transition">
+          <i id="audioIcon" data-lucide="volume-2" class="w-4 h-4 text-app-emerald"></i>
+          <span id="audioLabel" class="hidden sm:inline">الصوت مفعل</span>
+        </button>
+
+        <!-- System Status Pill -->
+        <div class="flex items-center gap-2 text-xs px-3 py-1.5 rounded-lg bg-app-card border border-app-border">
+          <span id="connectionDot" class="w-2.5 h-2.5 rounded-full bg-app-emerald shadow-sm"></span>
+          <span id="connectionText" class="text-xs font-semibold text-gray-300">متصل وجاهز</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Mobile Sub-bar -->
+    <div class="md:hidden flex border-t border-app-border bg-app-base">
+      <button onclick="switchMode('live')" id="mModeLiveBtn" class="flex-1 py-2 text-center text-xs font-bold text-app-emerald border-b-2 border-app-emerald">
+        الكاميرا الحية
+      </button>
+      <button onclick="switchMode('lab')" id="mModeLabBtn" class="flex-1 py-2 text-center text-xs font-bold text-gray-400">
+        مختبر الفيديو
+      </button>
+    </div>
+  </header>
+
+  <!-- ================================================================= -->
+  <!-- MAIN WORKSPACE -->
+  <!-- ================================================================= -->
+  <main class="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-5">
+
+    <!-- EXERCISE SELECTION RIBBON -->
+    <section class="calm-card rounded-xl p-3.5 sm:p-4">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-2.5 h-2.5 bg-app-emerald rounded-full"></div>
+          <h2 id="exerciseSelectorHeading" class="text-xs sm:text-sm font-bold text-white uppercase tracking-wide">
+            اختر التمرين المطلوب:
+          </h2>
+        </div>
+        <span id="orientationBadge" class="mono-num text-[11px] px-2.5 py-0.5 rounded bg-app-surface border border-app-border text-app-cyan font-medium">
+          الوضعية: بالجنب للكاميرا
+        </span>
+      </div>
+
+      <!-- Exercise Buttons Grid -->
+      <div id="exerciseDeck" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- =============================================================== -->
+    <!-- VIEW 1: LIVE CAMERA & TELEMETRY -->
+    <!-- =============================================================== -->
+    <div id="liveTelemetryView" class="space-y-5">
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+        <!-- Left / Main: Video & Skeleton Canvas (8 Cols) -->
+        <div class="lg:col-span-8 flex flex-col space-y-3">
+          
+          <!-- Video Screen Container -->
+          <div id="videoContainer" class="relative w-full aspect-video rounded-2xl overflow-hidden calm-card bg-black shadow-xl flex items-center justify-center border border-app-border">
+            
+            <!-- Direct OpenCV MJPEG Stream (Clean Camera Video) -->
+            <img id="mjpegStream" src="/video_feed" class="w-full h-full object-contain"
+                 onerror="handleMjpegStreamError(this)" alt="Direct Camera Stream">
+
+            <!-- High-Definition Native Vector Skeleton Overlay Canvas -->
+            <canvas id="skeletonCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-10"></canvas>
+
+            <!-- Video Overlay Badges & Controls -->
+            <div class="absolute inset-0 pointer-events-none p-3.5 flex flex-col justify-between z-20">
+              
+              <!-- Top Row -->
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 bg-app-void/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-app-border text-xs">
+                  <span class="w-2 h-2 rounded-full bg-app-emerald animate-pulse"></span>
+                  <span id="cameraStateText" class="text-gray-200 font-semibold">بث الرؤية الحاسوبية المباشر</span>
+                </div>
+
+                <div class="flex items-center gap-2 pointer-events-auto">
+                  <!-- Skeleton Visibility Toggle -->
+                  <button id="toggleSkeletonBtn" onclick="toggleSkeletonDisplay()" 
+                          class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-app-void/80 hover:bg-app-surface backdrop-blur-md border border-app-border text-xs text-gray-300 transition">
+                    <i data-lucide="bone" class="w-3.5 h-3.5 text-app-emerald"></i>
+                    <span id="toggleSkeletonText">الهيكل الحركي: مفعل</span>
+                  </button>
+
+                  <!-- Posture Orientation Warning -->
+                  <div id="postureAlertBadge" class="hidden items-center gap-1.5 bg-app-rose/90 text-white font-bold text-xs px-3 py-1 rounded-lg border border-white/20">
+                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                    <span id="postureAlertText">اضبط وقفتك للكاميرا</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottom Row -->
+              <div class="flex items-end justify-between">
+                <div class="bg-app-void/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-app-border">
+                  <span class="text-[10px] text-gray-400 block font-medium">المرحلة الحركية</span>
+                  <span id="phaseBadge" class="mono-num font-bold text-sm text-app-cyan">READY</span>
+                </div>
+
+                <div class="bg-app-void/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-app-border text-right">
+                  <span class="text-[10px] text-gray-400 block font-medium">الجهة المتابعة</span>
+                  <span id="sideBadge" class="mono-num font-bold text-xs text-app-emerald">LEFT SIDE</span>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- RANGE-OF-MOTION (ROM) PROGRESS BAR -->
+          <div class="calm-card rounded-xl p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between text-xs">
+              <div class="flex items-center gap-2">
+                <i data-lucide="gauge" class="w-4 h-4 text-app-emerald"></i>
+                <span id="romLabel" class="font-bold text-white text-xs">
+                  مقياس اكتمال المدى الحركي (Range of Motion):
+                </span>
+              </div>
+              <span id="romPercentage" class="mono-num font-bold text-app-emerald text-sm">0%</span>
+            </div>
+
+            <!-- Continuous Fluid Progress Track -->
+            <div class="w-full h-3.5 bg-app-void rounded-lg overflow-hidden p-0.5 border border-app-border relative shadow-inner">
+              <div id="romProgressBar" class="h-full bg-gradient-to-r from-app-cyan to-app-emerald rounded-md smooth-bar w-0 shadow-sm"></div>
+            </div>
+
+            <!-- Live Coach Advice Banner -->
+            <div id="coachBanner" class="p-2.5 rounded-lg bg-app-void border border-app-border flex items-center gap-3">
+              <div id="coachIconWrap" class="w-8 h-8 rounded-lg bg-app-emerald/15 text-app-emerald flex items-center justify-center shrink-0">
+                <i id="coachBannerIcon" data-lucide="sparkles" class="w-4 h-4"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <span id="coachBannerPrefix" class="text-[10px] text-gray-400 uppercase tracking-wider block font-semibold">توجيه المدرب الذكي:</span>
+                <p id="coachTipText" class="text-xs sm:text-sm font-semibold text-app-emeraldLight truncate">
+                  قف بوضوح أمام الكاميرا وابدأ التكرار عندما تكون مستعداً.
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Right: Telemetry Gauges & Rep Counters (4 Cols) -->
+        <div class="lg:col-span-4 flex flex-col space-y-4">
+
+          <!-- Giant Repetition / Hold Counter Card -->
+          <div id="repCard" class="calm-card rounded-xl p-5 flex flex-col justify-between relative overflow-hidden transition-all duration-300">
+            <div class="flex items-center justify-between">
+              <span id="counterCardTitle" class="text-xs font-bold text-gray-300 uppercase tracking-wide">
+                العدات المنجزة
+              </span>
+              <span class="mono-num text-[11px] px-2 py-0.5 rounded bg-app-emerald/15 text-app-emerald font-semibold border border-app-emerald/30">
+                LIVE
+              </span>
+            </div>
+
+            <div class="py-4 flex items-baseline justify-center gap-2">
+              <span id="mainRepCounter" class="mono-num font-black text-6xl text-white tracking-tight">
+                0
+              </span>
+              <span id="counterUnit" class="text-gray-400 font-bold text-sm">عدات</span>
+            </div>
+
+            <div class="flex items-center justify-between border-t border-app-border pt-3 text-xs">
+              <span id="sessionTimerLabel" class="text-gray-400">مدة التدريب:</span>
+              <span id="liveTimer" class="mono-num font-bold text-app-cyan text-sm">00:00</span>
+            </div>
+          </div>
+
+          <!-- Joint Angles Telemetry Card -->
+          <div class="calm-card rounded-xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span id="kinematicsTitle" class="text-xs font-bold text-white">
+                زوايا المفاصل الحية
+              </span>
+              <i data-lucide="maximize-2" class="w-4 h-4 text-app-cyan"></i>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div class="bg-app-void p-2.5 rounded-lg border border-app-border space-y-1">
+                <span id="primaryAngleName" class="text-[11px] text-gray-400 block font-medium">زاوية الكوع</span>
+                <span id="primaryAngleVal" class="mono-num font-bold text-xl text-app-emerald">--°</span>
+              </div>
+
+              <div class="bg-app-void p-2.5 rounded-lg border border-app-border space-y-1">
+                <span id="secondaryAngleName" class="text-[11px] text-gray-400 block font-medium">زاوية الكتف</span>
+                <span id="secondaryAngleVal" class="mono-num font-bold text-xl text-app-cyan">--°</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Latest Rep Performance / Form Accuracy Card -->
+          <div class="calm-card rounded-xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span id="latestScoreTitle" class="text-xs font-bold text-white">
+                تقييم آخر تكرار (Form Score)
+              </span>
+              <span id="latestScoreBadge" class="mono-num text-[10px] px-2 py-0.5 rounded bg-app-surface text-gray-400 font-semibold border border-app-border">
+                PENDING
+              </span>
+            </div>
+
+            <div class="flex items-center gap-3.5">
+              <div class="w-14 h-14 rounded-xl bg-app-void border border-app-border flex flex-col items-center justify-center shrink-0">
+                <span id="latestScoreVal" class="mono-num font-black text-xl text-app-emerald">--</span>
+                <span class="text-[9px] text-gray-400 mono-num">SCORE</span>
+              </div>
+              <div class="flex-1 text-xs">
+                <span id="scoreFeedbackLabel" class="text-gray-400 text-[11px] block">التقييم:</span>
+                <p id="latestScoreFeedback" class="font-medium text-gray-200 mt-0.5 line-clamp-2">
+                  أكمل تكراراً كاملاً لحساب درجة الدقة الحركية.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button onclick="resetCurrentSession()" 
+                    class="py-2.5 px-3 rounded-lg bg-app-void hover:bg-app-surface border border-app-border text-gray-300 font-bold text-xs flex items-center justify-center gap-1.5 transition">
+              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+              <span id="btnResetText">تصفير العداد</span>
+            </button>
+            <button onclick="finishAndSaveSession()" 
+                    class="py-2.5 px-3 rounded-lg bg-app-emerald text-white font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-app-emeraldDark transition shadow-sm">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i>
+              <span id="btnFinishText">إنهاء وحفظ</span>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- =============================================================== -->
+    <!-- VIEW 2: VIDEO LAB UPLOAD & ANALYSIS -->
+    <!-- =============================================================== -->
+    <div id="videoLabView" class="hidden space-y-6">
+
+      <!-- Upload Zone Card -->
+      <div class="calm-card rounded-xl p-6 sm:p-8 space-y-6">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-app-border pb-4">
+          <div>
+            <h3 id="videoLabTitle" class="text-base sm:text-lg font-bold text-white">
+              مختبر تحليل الفيديو الرياضي (AI Video Lab)
+            </h3>
+            <p id="videoLabSubtitle" class="text-xs text-gray-400 mt-1">
+              ارفع فيديو تمرينك بصيغة MP4 لتحليله كادراً بكادر واكتشاف الأخطاء وتقييم صحة الأداء.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-gray-400 font-semibold" id="labExerciseLabel">التمرين المحدد:</span>
+            <span id="labExerciseBadge" class="mono-num text-xs px-3 py-1 rounded bg-app-emerald text-white font-bold">
+              BICEP CURL
+            </span>
+          </div>
+        </div>
+
+        <!-- Drag & Drop Box -->
+        <div id="dropZone" 
+             ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleFileDrop(event)"
+             class="border-2 border-dashed border-app-border hover:border-app-emerald rounded-xl p-8 sm:p-12 text-center bg-app-void/60 transition-all cursor-pointer flex flex-col items-center justify-center space-y-3">
+          
+          <input type="file" id="videoFileInput" accept="video/mp4,video/quicktime,video/webm" class="hidden" onchange="handleFileSelected(event)">
+          
+          <div class="w-14 h-14 rounded-2xl bg-app-surface border border-app-border flex items-center justify-center text-app-emerald transition">
+            <i data-lucide="upload-cloud" class="w-7 h-7"></i>
+          </div>
+
+          <div class="space-y-1">
+            <p id="uploadPrompt" class="text-sm font-semibold text-white">
+              اسحب وأفلت ملف الفيديو هنا، أو <span class="text-app-emeraldLight underline">تصفح من جهازك</span>
+            </p>
+            <p class="text-xs text-gray-400">يدعم صيغ MP4, MOV, WEBM</p>
+          </div>
+
+          <div id="selectedFileInfo" class="hidden items-center gap-2 px-3 py-1.5 rounded bg-app-card border border-app-emerald/40 text-xs font-semibold text-app-emeraldLight">
+            <i data-lucide="file-video" class="w-4 h-4"></i>
+            <span id="selectedFileName">video.mp4</span>
+          </div>
+
+        </div>
+
+        <!-- Submit Button & Progress Bar -->
+        <div class="space-y-3">
+          <button id="startAnalyzeBtn" onclick="uploadAndAnalyzeVideo()" disabled
+                  class="w-full py-3.5 rounded-xl bg-app-emerald text-white font-bold text-sm tracking-wide flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-app-emeraldDark transition shadow-sm">
+            <i data-lucide="play" class="w-4 h-4 fill-white"></i>
+            <span id="analyzeBtnText">بدء التحليل الحركي للفيديو</span>
+          </button>
+
+          <!-- Upload / Processing Progress -->
+          <div id="analyzeProgressContainer" class="hidden space-y-2">
+            <div class="flex items-center justify-between text-xs">
+              <span id="analyzeProgressText" class="text-app-cyan font-medium animate-pulse">
+                جاري معالجة الفيديو واستخراج زوايا المفاصل...
+              </span>
+              <span id="analyzeProgressPercent" class="mono-num text-white font-bold">50%</span>
+            </div>
+            <div class="w-full h-2 bg-app-void rounded-full overflow-hidden">
+              <div id="analyzeProgressBar" class="h-full bg-app-emerald rounded-full transition-all duration-300 w-1/2"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- VIDEO ANALYSIS REPORT CARD -->
+      <div id="analysisReportCard" class="hidden calm-card rounded-xl p-6 sm:p-8 space-y-6">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-app-border pb-5">
+          <div class="space-y-1">
+            <h3 id="reportTitle" class="text-xl font-bold text-white">تقرير تقييم الأداء الحركي</h3>
+            <p id="reportSub" class="text-xs text-gray-400">ملخص نتائج فحص الفيديو ومطابقة زوايا المفاصل النموذجية</p>
+          </div>
+
+          <div id="verdictPill" class="px-5 py-2.5 rounded-xl border flex items-center gap-3 bg-app-emerald/15 border-app-emerald text-app-emerald">
+            <i id="verdictIcon" data-lucide="check-circle" class="w-6 h-6"></i>
+            <div>
+              <span id="verdictLabel" class="font-bold text-base block">ناجح ومتقن</span>
+              <span id="verdictSubText" class="text-xs text-gray-300">أداء سليم للمسار الحركي</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 Metrics Columns -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="bg-app-void p-4 rounded-xl border border-app-border flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-app-card border border-app-emerald/30 flex items-center justify-center shrink-0">
+              <span id="reportScoreVal" class="mono-num font-black text-2xl text-app-emerald">88%</span>
+            </div>
+            <div>
+              <span id="scoreMetricLabel" class="text-xs text-gray-400 block font-medium">معدل الدقة الحركية (DTW)</span>
+              <span id="scoreMetricQuality" class="text-xs font-bold text-white">ممتاز جداً</span>
+            </div>
+          </div>
+
+          <div class="bg-app-void p-4 rounded-xl border border-app-border flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-app-card border border-app-cyan/30 flex items-center justify-center shrink-0">
+              <span id="reportRepsVal" class="mono-num font-black text-2xl text-app-cyan">8</span>
+            </div>
+            <div>
+              <span id="repsMetricLabel" class="text-xs text-gray-400 block font-medium">إجمالي التكرارات المكتملة</span>
+              <span id="repsMetricSub" class="text-xs font-bold text-white">عدات كاملة المدى</span>
+            </div>
+          </div>
+
+          <div class="bg-app-void p-4 rounded-xl border border-app-border flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-app-card border border-app-border flex items-center justify-center shrink-0">
+              <span id="reportDurationVal" class="mono-num font-bold text-xl text-white">18.4s</span>
+            </div>
+            <div>
+              <span id="durationMetricLabel" class="text-xs text-gray-400 block font-medium">مدة الفيديو المحلل</span>
+              <span id="framesMetricSub" class="text-[11px] text-gray-400 mono-num">552 FRAMES</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mistakes & Actionable Improvements -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="bg-app-void p-4 rounded-xl border border-app-border space-y-3">
+            <div class="flex items-center gap-2">
+              <i data-lucide="alert-circle" class="w-4 h-4 text-app-rose"></i>
+              <h4 id="mistakesHeading" class="text-xs font-bold text-white uppercase tracking-wide">
+                الأخطاء الحركية المرصودة
+              </h4>
+            </div>
+            <div id="mistakesContainer" class="space-y-2"></div>
+          </div>
+
+          <div class="bg-app-void p-4 rounded-xl border border-app-border space-y-3">
+            <div class="flex items-center gap-2">
+              <i data-lucide="check-square" class="w-4 h-4 text-app-emerald"></i>
+              <h4 id="actionTipsHeading" class="text-xs font-bold text-white uppercase tracking-wide">
+                خطة التحسين والتصحيح
+              </h4>
+            </div>
+            <div id="actionTipsContainer" class="space-y-2"></div>
+          </div>
+        </div>
+
+        <!-- Rep by Rep Breakdown -->
+        <div class="space-y-3 pt-2">
+          <h4 id="breakdownHeading" class="text-xs font-bold text-gray-300 uppercase tracking-wide">
+            تفصيل أداء العدات
+          </h4>
+          <div id="repBreakdownContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5"></div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ================================================================= -->
+  <!-- JAVASCRIPT LOGIC & SKELETON CANVAS ENGINE -->
+  <!-- ================================================================= -->
+  <script>
+    const AppState = {
+      lang: 'ar',
+      mode: 'live',
+      audioEnabled: true,
+      showSkeleton: true,
+      selectedExercise: 'bicep_curl',
+      supportedExercises: [],
+      pollInterval: null,
+      sessionTimerInterval: null,
+      sessionStartTimestamp: 0,
+      totalReps: 0,
+      holdSeconds: 0,
+      selectedVideoFile: null,
+      isAnalyzingVideo: false,
+    };
+
+    const I18N = {
+      ar: {
+        appSubtitle: "مشروع التخرج — نظام التحليل الحركي والمدرب الذكي",
+        tabLive: "الكاميرا الحية (Live Camera)",
+        tabLab: "مختبر تحليل الفيديو (Video Lab)",
+        audioOn: "الصوت مفعل",
+        audioOff: "الصوت مكتوم",
+        skeletonOn: "الهيكل الحركي: مفعل",
+        skeletonOff: "الهيكل الحركي: مخفي",
+        exerciseSelectorHeading: "اختر التمرين المطلوب:",
+        romLabel: "مقياس اكتمال المدى الحركي (Range of Motion):",
+        counterCardTitle: "العدات المنجزة",
+        counterCardTitlePlank: "مدة الثبات بالثواني",
+        repsUnit: "عدات",
+        secondsUnit: "ثانية",
+        sessionTimerLabel: "مدة التدريب:",
+        kinematicsTitle: "زوايا المفاصل الحية",
+        latestScoreTitle: "تقييم آخر تكرار (Form Score)",
+        scoreFeedbackLabel: "التقييم:",
+        btnReset: "تصفير العداد",
+        btnFinish: "إنهاء وحفظ",
+        videoLabTitle: "مختبر تحليل الفيديو الرياضي (AI Video Lab)",
+        videoLabSubtitle: "ارفع فيديو تمرينك بصيغة MP4 لتحليله كادراً بكادر واكتشاف الأخطاء وتقييم صحة الأداء.",
+        labExerciseLabel: "التمرين المحدد:",
+        uploadPrompt: "اسحب وأفلت ملف الفيديو هنا، أو <span class=\"text-app-emeraldLight underline\">تصفح من جهازك</span>",
+        analyzeBtnText: "بدء التحليل الحركي للفيديو",
+        reportTitle: "تقرير تقييم الأداء الحركي",
+        reportSub: "ملخص نتائج فحص الفيديو ومطابقة زوايا المفاصل النموذجية",
+        scoreMetricLabel: "معدل الدقة الحركية (DTW)",
+        repsMetricLabel: "إجمالي التكرارات المكتملة",
+        repsMetricSub: "عدات كاملة المدى",
+        durationMetricLabel: "مدة الفيديو المحلل",
+        mistakesHeading: "الأخطاء الحركية المرصودة",
+        actionTipsHeading: "خطة التحسين والتصحيح",
+        breakdownHeading: "تفصيل أداء العدات",
+        noMistakes: "أداء ممتاز! لم يتم رصد أي أخطاء فنية في هذا التمرين.",
+        noMistakesTip: "حافظ على هذا المستوى الرائع واستمر بنفس الإيقاع الحركي.",
+      },
+      en: {
+        appSubtitle: "Graduation Project — Biomechanics Tracking & AI Fitness Coach",
+        tabLive: "Live Camera Stream",
+        tabLab: "Video Analysis Lab",
+        audioOn: "Voice Active",
+        audioOff: "Voice Muted",
+        skeletonOn: "Skeleton: ON",
+        skeletonOff: "Skeleton: OFF",
+        exerciseSelectorHeading: "SELECT EXERCISE PROTOCOL:",
+        romLabel: "Range of Motion Gauge (ROM):",
+        counterCardTitle: "COMPLETED REPS",
+        counterCardTitlePlank: "PLANK HOLD TIME (SECONDS)",
+        repsUnit: "reps",
+        secondsUnit: "sec",
+        sessionTimerLabel: "Workout Duration:",
+        kinematicsTitle: "Live Joint Kinematics",
+        latestScoreTitle: "Latest Rep Form Accuracy",
+        scoreFeedbackLabel: "Form Feedback:",
+        btnReset: "Reset Counter",
+        btnFinish: "Finish & Save",
+        videoLabTitle: "AI Video Analysis Lab",
+        videoLabSubtitle: "Upload your workout video in MP4/MOV to analyze kinematics and detect form mistakes.",
+        labExerciseLabel: "Active Exercise:",
+        uploadPrompt: "Drag & drop workout video here, or <span class=\"text-app-emeraldLight underline\">Browse Files</span>",
+        analyzeBtnText: "Run Biomechanical Analysis",
+        reportTitle: "Biomechanical Evaluation Report",
+        reportSub: "Detailed breakdown of kinetic performance and reference alignment",
+        scoreMetricLabel: "DTW Kinetic Accuracy",
+        repsMetricLabel: "Completed Repetitions",
+        repsMetricSub: "Full Range Cycles",
+        durationMetricLabel: "Analyzed Video Duration",
+        mistakesHeading: "Detected Biomechanical Faults",
+        actionTipsHeading: "Actionable Improvement Plan",
+        breakdownHeading: "Repetition Breakdown Timeline",
+        noMistakes: "Flawless execution! No biomechanical faults were detected.",
+        noMistakesTip: "Keep up this form and maintain consistent joint stabilization.",
+      }
+    };
+
+    // =================================================================
+    // SKELETON CONNECTIONS & BONE DEFINITIONS
+    // =================================================================
+    const SKELETON_CONNECTIONS = [
+      // Torso
+      { from: 11, to: 12, part: 'shoulder' },
+      { from: 11, to: 23, part: 'torso' },
+      { from: 12, to: 24, part: 'torso' },
+      { from: 23, to: 24, part: 'hip' },
+      // Left Arm
+      { from: 11, to: 13, part: 'elbow', side: 'left' },
+      { from: 13, to: 15, part: 'elbow', side: 'left' },
+      // Right Arm
+      { from: 12, to: 14, part: 'elbow', side: 'right' },
+      { from: 14, to: 16, part: 'elbow', side: 'right' },
+      // Left Leg
+      { from: 23, to: 25, part: 'knee', side: 'left' },
+      { from: 25, to: 27, part: 'knee', side: 'left' },
+      { from: 27, to: 31, part: 'knee', side: 'left' },
+      // Right Leg
+      { from: 24, to: 26, part: 'knee', side: 'right' },
+      { from: 26, to: 28, part: 'knee', side: 'right' },
+      { from: 28, to: 32, part: 'knee', side: 'right' },
+      // Neck / Face anchor
+      { from: 0, to: 11, part: 'neck' },
+      { from: 0, to: 12, part: 'neck' },
+    ];
+
+    // Landmark tracking state for smooth 60fps interpolation (LERP)
+    let currentLandmarks = null;
+    let targetLandmarks = null;
+    let currentFaultyJoint = '';
+    let currentAngles = {};
+    let currentActiveSide = 'left';
+    let smoothRomPct = 0;
+    let targetRomPct = 0;
+    let lastSpokenText = '';
+    let lastSpokenTime = 0;
+    let lastAnnouncedRep = 0;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      lucide.createIcons();
+      await fetchSupportedExercises();
+      renderExerciseDeck();
+      applyLanguageUI();
+      startStatusPolling();
+      startSessionTimer();
+      startAnimationLoops();
+    });
+
+    async function fetchSupportedExercises() {
+      try {
+        const res = await fetch('/api/exercises');
+        if (res.ok) {
+          AppState.supportedExercises = await res.json();
+        }
+      } catch (e) {
+        AppState.supportedExercises = [
+          { id: "bicep_curl", name: "Bicep Curl", name_ar: "بايسبس كيرل", type: "reps", view: "side", muscle: "Biceps", muscle_ar: "البايسبس" },
+          { id: "squat", name: "Squat", name_ar: "سكوات", type: "reps", view: "side", muscle: "Quads/Glutes", muscle_ar: "الفخذ" },
+          { id: "lunge", name: "Lunge", name_ar: "طعنات الساق", type: "reps", view: "side", muscle: "Quads", muscle_ar: "الساقين" },
+          { id: "push_up", name: "Push Up", name_ar: "تمرين الضغط", type: "reps", view: "side", muscle: "Chest", muscle_ar: "الصدر" },
+          { id: "superman", name: "Superman", name_ar: "سوبرمان", type: "reps", view: "side", muscle: "Back", muscle_ar: "الظهر" },
+          { id: "shoulder_press", name: "Shoulder Press", name_ar: "دفع الكتف", type: "reps", view: "front", muscle: "Shoulders", muscle_ar: "الأكتاف" },
+          { id: "dips", name: "Chair Dips", name_ar: "غطس المقعد", type: "reps", view: "side", muscle: "Triceps", muscle_ar: "الترايسبس" },
+          { id: "plank", name: "Plank", name_ar: "تمرين البلانك", type: "hold", view: "side", muscle: "Core", muscle_ar: "البطن" },
+        ];
+      }
+    }
+
+    function renderExerciseDeck() {
+      const container = document.getElementById('exerciseDeck');
+      if (!container) return;
+      container.innerHTML = '';
+
+      AppState.supportedExercises.forEach(ex => {
+        const isSelected = (ex.id === AppState.selectedExercise);
+        const name = (AppState.lang === 'ar') ? ex.name_ar : ex.name;
+        const muscle = (AppState.lang === 'ar') ? ex.muscle_ar : ex.muscle;
+
+        const btn = document.createElement('button');
+        btn.onclick = () => selectExercise(ex.id);
+        btn.className = `p-2.5 rounded-lg text-right transition-all flex flex-col justify-between border ${
+          isSelected 
+            ? 'bg-app-surface border-app-emerald text-white shadow-sm' 
+            : 'bg-app-void border-app-border text-gray-400 hover:text-white hover:border-app-borderLight'
+        }`;
+
+        btn.innerHTML = `
+          <div class="flex items-center justify-between w-full mb-1">
+            <span class="mono-num text-[10px] uppercase px-1.5 py-0.5 rounded font-bold ${
+              isSelected ? 'bg-app-emerald text-white' : 'bg-app-card text-gray-400'
+            }">
+              ${ex.view.toUpperCase()}
+            </span>
+            <span class="w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-app-emerald' : 'bg-transparent'}"></span>
+          </div>
+          <div class="text-xs font-bold leading-tight truncate w-full ${isSelected ? 'text-app-emeraldLight' : 'text-gray-200'}">
+            ${name}
+          </div>
+          <div class="text-[10px] text-gray-400 truncate w-full mt-0.5">
+            ${muscle}
+          </div>
+        `;
+        container.appendChild(btn);
+      });
+
+      const activeObj = AppState.supportedExercises.find(e => e.id === AppState.selectedExercise);
+      if (activeObj) {
+        const badge = document.getElementById('orientationBadge');
+        if (badge) {
+          const isFront = (activeObj.view === 'front');
+          badge.textContent = isFront 
+            ? (AppState.lang === 'ar' ? 'الوضعية: مواجهة الكاميرا' : 'VIEW: FRONT PROFILE')
+            : (AppState.lang === 'ar' ? 'الوضعية: بالجنب للكاميرا' : 'VIEW: SIDE PROFILE');
+          badge.className = `mono-num text-[11px] px-2.5 py-0.5 rounded border font-medium ${
+            isFront ? 'bg-app-cyan/15 border-app-cyan/30 text-app-cyan' : 'bg-app-surface border-app-border text-app-emeraldLight'
+          }`;
+        }
+        
+        const labBadge = document.getElementById('labExerciseBadge');
+        if (labBadge) {
+          labBadge.textContent = activeObj.name.toUpperCase();
+        }
+      }
+    }
+
+    async function selectExercise(exerciseId) {
+      if (AppState.selectedExercise === exerciseId) return;
+      AppState.selectedExercise = exerciseId;
+      renderExerciseDeck();
+      resetCurrentSession();
+
+      try {
+        await fetch('/api/control', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ exercise: exerciseId, lang: AppState.lang, action: 'reset' })
+        });
+      } catch (e) {
+        console.warn('Control request error:', e);
+      }
+    }
+
+    async function setAppLanguage(lang) {
+      if (AppState.lang === lang) return;
+      AppState.lang = lang;
+      
+      const html = document.documentElement;
+      if (lang === 'ar') {
+        html.setAttribute('dir', 'rtl');
+        html.setAttribute('lang', 'ar');
+        document.getElementById('langArBtn').className = 'px-2.5 py-1 text-xs font-bold rounded transition-all bg-app-surface text-app-emeraldLight';
+        document.getElementById('langEnBtn').className = 'px-2.5 py-1 text-xs font-bold rounded transition-all text-gray-400 hover:text-white';
+      } else {
+        html.setAttribute('dir', 'ltr');
+        html.setAttribute('lang', 'en');
+        document.getElementById('langArBtn').className = 'px-2.5 py-1 text-xs font-bold rounded transition-all text-gray-400 hover:text-white';
+        document.getElementById('langEnBtn').className = 'px-2.5 py-1 text-xs font-bold rounded transition-all bg-app-surface text-app-emeraldLight';
+      }
+
+      applyLanguageUI();
+      renderExerciseDeck();
+
+      try {
+        await fetch('/api/control', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lang: lang })
+        });
+      } catch (e) {}
+    }
+
+    function applyLanguageUI() {
+      const t = I18N[AppState.lang];
+      document.getElementById('appSubtitle').textContent = t.appSubtitle;
+      document.getElementById('tabLiveText').textContent = t.tabLive;
+      document.getElementById('tabLabText').textContent = t.tabLab;
+      document.getElementById('audioLabel').textContent = AppState.audioEnabled ? t.audioOn : t.audioOff;
+      document.getElementById('toggleSkeletonText').textContent = AppState.showSkeleton ? t.skeletonOn : t.skeletonOff;
+      document.getElementById('exerciseSelectorHeading').textContent = t.exerciseSelectorHeading;
+      document.getElementById('romLabel').textContent = t.romLabel;
+      
+      const isPlank = (AppState.selectedExercise === 'plank');
+      document.getElementById('counterCardTitle').textContent = isPlank ? t.counterCardTitlePlank : t.counterCardTitle;
+      document.getElementById('counterUnit').textContent = isPlank ? t.secondsUnit : t.repsUnit;
+      
+      document.getElementById('sessionTimerLabel').textContent = t.sessionTimerLabel;
+      document.getElementById('kinematicsTitle').textContent = t.kinematicsTitle;
+      document.getElementById('latestScoreTitle').textContent = t.latestScoreTitle;
+      document.getElementById('scoreFeedbackLabel').textContent = t.scoreFeedbackLabel;
+      document.getElementById('btnResetText').textContent = t.btnReset;
+      document.getElementById('btnFinishText').textContent = t.btnFinish;
+
+      document.getElementById('videoLabTitle').textContent = t.videoLabTitle;
+      document.getElementById('videoLabSubtitle').textContent = t.videoLabSubtitle;
+      document.getElementById('labExerciseLabel').textContent = t.labExerciseLabel;
+      document.getElementById('uploadPrompt').innerHTML = t.uploadPrompt;
+      document.getElementById('analyzeBtnText').textContent = t.analyzeBtnText;
+      document.getElementById('reportTitle').textContent = t.reportTitle;
+      document.getElementById('reportSub').textContent = t.reportSub;
+      document.getElementById('scoreMetricLabel').textContent = t.scoreMetricLabel;
+      document.getElementById('repsMetricLabel').textContent = t.repsMetricLabel;
+      document.getElementById('durationMetricLabel').textContent = t.durationMetricLabel;
+      document.getElementById('mistakesHeading').textContent = t.mistakesHeading;
+      document.getElementById('actionTipsHeading').textContent = t.actionTipsHeading;
+      document.getElementById('breakdownHeading').textContent = t.breakdownHeading;
+    }
+
+    function toggleVoiceAudio() {
+      AppState.audioEnabled = !AppState.audioEnabled;
+      const t = I18N[AppState.lang];
+      const icon = document.getElementById('audioIcon');
+      const label = document.getElementById('audioLabel');
+
+      if (AppState.audioEnabled) {
+        icon.setAttribute('data-lucide', 'volume-2');
+        icon.className = 'w-4 h-4 text-app-emerald';
+        label.textContent = t.audioOn;
+        speakText(AppState.lang === 'ar' ? 'تم تفعيل المساعد الصوتي' : 'Voice coach active');
+      } else {
+        icon.setAttribute('data-lucide', 'volume-x');
+        icon.className = 'w-4 h-4 text-gray-400';
+        label.textContent = t.audioOff;
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+      }
+      lucide.createIcons();
+    }
+
+    function toggleSkeletonDisplay() {
+      AppState.showSkeleton = !AppState.showSkeleton;
+      const t = I18N[AppState.lang];
+      document.getElementById('toggleSkeletonText').textContent = AppState.showSkeleton ? t.skeletonOn : t.skeletonOff;
+      const canvas = document.getElementById('skeletonCanvas');
+      if (canvas && !AppState.showSkeleton) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function speakText(text, minCooldownSec = 2.5) {
+      if (!AppState.audioEnabled || !text || !('speechSynthesis' in window)) return;
+      const now = Date.now();
+      if (text === lastSpokenText && (now - lastSpokenTime) < (minCooldownSec * 1000)) {
+        return;
+      }
+      lastSpokenText = text;
+      lastSpokenTime = now;
+
+      try {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1.02;
+        utterance.pitch = 1.0;
+        utterance.lang = (AppState.lang === 'ar') ? 'ar-SA' : 'en-US';
+        window.speechSynthesis.speak(utterance);
+      } catch (e) {}
+    }
+
+    function switchMode(mode) {
+      AppState.mode = mode;
+      const liveView = document.getElementById('liveTelemetryView');
+      const labView = document.getElementById('videoLabView');
+      const liveBtn = document.getElementById('modeLiveBtn');
+      const labBtn = document.getElementById('modeLabBtn');
+      const mLiveBtn = document.getElementById('mModeLiveBtn');
+      const mLabBtn = document.getElementById('mModeLabBtn');
+
+      if (mode === 'live') {
+        liveView.classList.remove('hidden');
+        labView.classList.add('hidden');
+        liveBtn.className = 'flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-app-emerald text-white shadow-sm';
+        labBtn.className = 'flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white';
+        mLiveBtn.className = 'flex-1 py-2 text-center text-xs font-bold text-app-emerald border-b-2 border-app-emerald';
+        mLabBtn.className = 'flex-1 py-2 text-center text-xs font-bold text-gray-400';
+      } else {
+        liveView.classList.add('hidden');
+        labView.classList.remove('hidden');
+        labBtn.className = 'flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-app-emerald text-white shadow-sm';
+        liveBtn.className = 'flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white';
+        mLabBtn.className = 'flex-1 py-2 text-center text-xs font-bold text-app-emerald border-b-2 border-app-emerald';
+        mLiveBtn.className = 'flex-1 py-2 text-center text-xs font-bold text-gray-400';
+      }
+    }
+
+    // =================================================================
+    // DIRECT CAMERA STREAM & STATUS POLLING
+    // =================================================================
+    function handleMjpegStreamError(imgEl) {
+      setTimeout(() => {
+        imgEl.src = '/video_feed?t=' + Date.now();
+      }, 1500);
+    }
+
+    function startStatusPolling() {
+      if (AppState.pollInterval) clearInterval(AppState.pollInterval);
+
+      AppState.pollInterval = setInterval(async () => {
+        if (AppState.mode !== 'live') return;
+
+        try {
+          const res = await fetch('/api/status');
+          if (res.ok) {
+            const data = await res.json();
+            updateLiveMetrics(data);
+            handleVoiceCoachCadence(data);
+          }
+        } catch (e) {
+          // Keep calm without disruptive errors if backend starts up
+        }
+      }, 80); // Fast 80ms polling for highly responsive telemetry & skeleton
+    }
+
+    function handleVoiceCoachCadence(data) {
+      if (!AppState.audioEnabled || !data) return;
+
+      // 1. Immediate vocal correction if user made a form mistake
+      if (data.announcement) {
+        speakText(data.announcement, 3.5);
+        return;
+      }
+
+      // 2. Rep count announcement: ONLY announce every 2 reps (2, 4, 6, 8, 10...)
+      // The user explicitly requested: "مش لازم عده يقلها يعني خليه بعد كل عدتين يقول"
+      const reps = data.rep_count || 0;
+      if (reps > 0 && reps !== lastAnnouncedRep && reps % 2 === 0) {
+        lastAnnouncedRep = reps;
+        let phrase = '';
+        if (AppState.lang === 'ar') {
+          const phrases = {
+            2: "عدتان، ممتاز! واصل بنفس الإيقاع.",
+            4: "أربع عدات، عاش يا بطل!",
+            6: "ست عدات، أداء بطولي كمل!",
+            8: "ثماني عدات، ثبات رائع!",
+            10: "عشر عدات كاملة، وحش واصل!",
+          };
+          phrase = phrases[reps] || `العدة رقم ${reps}، استمر بنفس القوة!`;
+        } else {
+          const phrases = {
+            2: "Two reps down, great rhythm!",
+            4: "Four reps, strong and steady!",
+            6: "Six reps, keep pushing!",
+            8: "Eight reps, excellent control!",
+            10: "Ten complete reps, outstanding work!",
+          };
+          phrase = phrases[reps] || `Rep ${reps}, keep the momentum!`;
+        }
+        speakText(phrase, 2.0);
+      }
+    }
+
+    function updateLiveMetrics(data) {
+      if (!data) return;
+
+      const isPlank = (AppState.selectedExercise === 'plank');
+      if (isPlank) {
+        AppState.holdSeconds = data.hold_seconds || 0;
+        const mins = Math.floor(AppState.holdSeconds / 60);
+        const secs = Math.floor(AppState.holdSeconds % 60);
+        document.getElementById('mainRepCounter').textContent = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+      } else {
+        const prev = AppState.totalReps;
+        AppState.totalReps = data.rep_count || 0;
+        const counterEl = document.getElementById('mainRepCounter');
+        if (AppState.totalReps > prev) {
+          counterEl.classList.remove('rep-animate');
+          void counterEl.offsetWidth; // force reflow
+          counterEl.classList.add('rep-animate');
+        }
+        counterEl.textContent = AppState.totalReps;
+      }
+
+      // Smooth ROM target for the 60fps continuous animator
+      if (data.progress_pct !== undefined) {
+        targetRomPct = Math.min(100, Math.max(0, data.progress_pct));
+      }
+
+      if (data.phase) {
+        document.getElementById('phaseBadge').textContent = data.phase.toUpperCase();
+      }
+
+      if (data.active_side) {
+        currentActiveSide = data.active_side;
+        document.getElementById('sideBadge').textContent = `${data.active_side.toUpperCase()} SIDE`;
+      }
+
+      if (data.angles) {
+        currentAngles = data.angles;
+        const pEl = document.getElementById('primaryAngleVal');
+        const sEl = document.getElementById('secondaryAngleVal');
+        if (data.angles.elbow !== undefined) {
+          pEl.textContent = `${Math.round(data.angles.elbow)}°`;
+          document.getElementById('primaryAngleName').textContent = (AppState.lang === 'ar') ? 'زاوية الكوع' : 'Elbow Angle';
+        } else if (data.angles.knee !== undefined) {
+          pEl.textContent = `${Math.round(data.angles.knee)}°`;
+          document.getElementById('primaryAngleName').textContent = (AppState.lang === 'ar') ? 'زاوية الركبة' : 'Knee Angle';
+        }
+
+        if (data.angles.shoulder !== undefined) {
+          sEl.textContent = `${Math.round(data.angles.shoulder)}°`;
+          document.getElementById('secondaryAngleName').textContent = (AppState.lang === 'ar') ? 'زاوية الكتف' : 'Shoulder Angle';
+        } else if (data.angles.hip !== undefined) {
+          sEl.textContent = `${Math.round(data.angles.hip)}°`;
+          document.getElementById('secondaryAngleName').textContent = (AppState.lang === 'ar') ? 'زاوية الحوض' : 'Hip Angle';
+        }
+      }
+
+      // Faulty joint indicator
+      currentFaultyJoint = data.faulty_joint || '';
+      const coachTipEl = document.getElementById('coachTipText');
+      const coachIconWrap = document.getElementById('coachIconWrap');
+      const alertBadge = document.getElementById('postureAlertBadge');
+
+      if (data.coaching_tip) {
+        coachTipEl.textContent = data.coaching_tip;
+      }
+
+      if (currentFaultyJoint) {
+        coachTipEl.classList.remove('text-app-emeraldLight');
+        coachTipEl.classList.add('text-app-rose');
+        coachIconWrap.className = 'w-8 h-8 rounded-lg bg-app-rose/15 text-app-rose flex items-center justify-center shrink-0';
+        if (alertBadge) {
+          alertBadge.classList.remove('hidden');
+          alertBadge.classList.add('flex');
+          document.getElementById('postureAlertText').textContent = data.coaching_tip || 'انتبه لصحة الحركة';
+        }
+      } else {
+        coachTipEl.classList.remove('text-app-rose');
+        coachTipEl.classList.add('text-app-emeraldLight');
+        coachIconWrap.className = 'w-8 h-8 rounded-lg bg-app-emerald/15 text-app-emerald flex items-center justify-center shrink-0';
+        if (alertBadge) {
+          alertBadge.classList.remove('flex');
+          alertBadge.classList.add('hidden');
+        }
+      }
+
+      // Update landmarks for canvas renderer
+      if (data.landmarks && data.landmarks.length > 0) {
+        targetLandmarks = data.landmarks;
+      } else {
+        targetLandmarks = null;
+      }
+
+      if (data.latest_score !== undefined && data.latest_score !== null) {
+        document.getElementById('latestScoreVal').textContent = Math.round(data.latest_score);
+        document.getElementById('latestScoreFeedback').textContent = data.latest_feedback || (AppState.lang === 'ar' ? 'أداء متوافق مع المرجع' : 'Form aligned with reference');
+        const badge = document.getElementById('latestScoreBadge');
+        if (data.latest_score >= 80) {
+          badge.textContent = AppState.lang === 'ar' ? 'ممتاز' : 'OPTIMAL';
+          badge.className = 'mono-num text-[10px] px-2 py-0.5 rounded bg-app-emerald/20 text-app-emeraldLight font-semibold border border-app-emerald/40';
+        } else if (data.latest_score >= 60) {
+          badge.textContent = AppState.lang === 'ar' ? 'جيد' : 'GOOD';
+          badge.className = 'mono-num text-[10px] px-2 py-0.5 rounded bg-app-cyan/20 text-app-cyanLight font-semibold border border-app-cyan/40';
+        } else {
+          badge.textContent = AppState.lang === 'ar' ? 'يحتاج تصحيح' : 'CORRECTION';
+          badge.className = 'mono-num text-[10px] px-2 py-0.5 rounded bg-app-rose/20 text-app-rose font-semibold border border-app-rose/40';
+        }
+      }
+    }
+
+    // =================================================================
+    // 60 FPS CONTINUOUS ANIMATION ENGINE (ROM BAR & CANVAS SKELETON)
+    // =================================================================
+    function startAnimationLoops() {
+      // 1. Continuous ROM Progress Bar Animation Loop (Fluid interpolation)
+      function animateRom() {
+        // Continuous LERP to eliminate choppy step jumps
+        smoothRomPct += (targetRomPct - smoothRomPct) * 0.22;
+        if (Math.abs(targetRomPct - smoothRomPct) < 0.1) smoothRomPct = targetRomPct;
+
+        const bar = document.getElementById('romProgressBar');
+        const pctText = document.getElementById('romPercentage');
+        if (bar) bar.style.width = `${smoothRomPct.toFixed(1)}%`;
+        if (pctText) pctText.textContent = `${Math.round(smoothRomPct)}%`;
+
+        requestAnimationFrame(animateRom);
+      }
+      requestAnimationFrame(animateRom);
+
+      // 2. High-Definition Vector Skeleton Canvas Loop
+      function animateSkeleton() {
+        renderSkeletonFrame();
+        requestAnimationFrame(animateSkeleton);
+      }
+      requestAnimationFrame(animateSkeleton);
+    }
+
+    function renderSkeletonFrame() {
+      const canvas = document.getElementById('skeletonCanvas');
+      if (!canvas || !AppState.showSkeleton) return;
+
+      const container = canvas.parentElement;
+      if (!container) return;
+
+      const dpr = window.devicePixelRatio || 1;
+      const cWidth = container.clientWidth;
+      const cHeight = container.clientHeight;
+
+      if (canvas.width !== Math.round(cWidth * dpr) || canvas.height !== Math.round(cHeight * dpr)) {
+        canvas.width = Math.round(cWidth * dpr);
+        canvas.height = Math.round(cHeight * dpr);
+      }
+
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (!targetLandmarks || targetLandmarks.length < 25) {
+        currentLandmarks = null;
+        return;
+      }
+
+      // Smooth landmark interpolation (LERP 60fps)
+      if (!currentLandmarks || currentLandmarks.length !== targetLandmarks.length) {
+        currentLandmarks = targetLandmarks.map(p => ({ x: p.x, y: p.y, v: (p.v ?? p.visibility ?? 1.0) }));
+      } else {
+        const lerpFactor = 0.32;
+        for (let i = 0; i < targetLandmarks.length; i++) {
+          currentLandmarks[i].x += (targetLandmarks[i].x - currentLandmarks[i].x) * lerpFactor;
+          currentLandmarks[i].y += (targetLandmarks[i].y - currentLandmarks[i].y) * lerpFactor;
+          currentLandmarks[i].v = (targetLandmarks[i].v ?? targetLandmarks[i].visibility ?? 1.0);
+        }
+      }
+
+      // Exact letterbox mapping for 640x480 MJPEG camera stream inside container
+      const streamAspect = 640 / 480;
+      const containerAspect = cWidth / cHeight;
+      let renderW, renderH, offsetX, offsetY;
+
+      if (containerAspect > streamAspect) {
+        renderH = cHeight;
+        renderW = cHeight * streamAspect;
+        offsetX = (cWidth - renderW) / 2;
+        offsetY = 0;
+      } else {
+        renderW = cWidth;
+        renderH = cWidth / streamAspect;
+        offsetX = 0;
+        offsetY = (cHeight - renderH) / 2;
+      }
+
+      const mapPoint = (p) => ({
+        x: (offsetX + p.x * renderW) * dpr,
+        y: (offsetY + p.y * renderH) * dpr,
+        v: (p.v ?? p.visibility ?? 1.0),
+      });
+
+      const pts = currentLandmarks.map(mapPoint);
+
+      // Draw modern anti-aliased glowing limbs
+      SKELETON_CONNECTIONS.forEach(conn => {
+        const p1 = pts[conn.from];
+        const p2 = pts[conn.to];
+        if (!p1 || !p2 || p1.v < 0.4 || p2.v < 0.4) return;
+
+        const isFaulty = currentFaultyJoint && (
+          conn.part === currentFaultyJoint || 
+          (currentFaultyJoint === 'knee' && conn.part === 'knee') ||
+          (currentFaultyJoint === 'elbow' && conn.part === 'elbow') ||
+          (currentFaultyJoint === 'hip' && (conn.part === 'hip' || conn.part === 'torso')) ||
+          (currentFaultyJoint === 'shoulder' && conn.part === 'shoulder')
+        );
+
+        const isActiveSide = (conn.side === currentActiveSide || conn.side === undefined);
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.lineWidth = (isFaulty ? 4.5 : 3.5) * dpr;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        if (isFaulty) {
+          ctx.strokeStyle = '#F43F5E';
+          ctx.shadowColor = 'rgba(244, 63, 94, 0.75)';
+          ctx.shadowBlur = 12 * dpr;
+        } else if (isActiveSide) {
+          ctx.strokeStyle = '#10B981';
+          ctx.shadowColor = 'rgba(16, 185, 129, 0.6)';
+          ctx.shadowBlur = 9 * dpr;
+        } else {
+          ctx.strokeStyle = 'rgba(14, 165, 233, 0.5)';
+          ctx.shadowColor = 'rgba(14, 165, 233, 0.3)';
+          ctx.shadowBlur = 5 * dpr;
+        }
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      // Draw high-definition joint nodes
+      pts.forEach((p, idx) => {
+        if (p.v < 0.4 || (idx > 10 && idx !== 11 && idx !== 12 && idx !== 13 && idx !== 14 && idx !== 15 && idx !== 16 && idx !== 23 && idx !== 24 && idx !== 25 && idx !== 26 && idx !== 27 && idx !== 28)) {
+          return;
+        }
+
+        const isKnee = (idx === 25 || idx === 26);
+        const isElbow = (idx === 13 || idx === 14);
+        const isHip = (idx === 23 || idx === 24);
+        const isShoulder = (idx === 11 || idx === 12);
+
+        const isFaulty = currentFaultyJoint && (
+          (currentFaultyJoint === 'knee' && isKnee) ||
+          (currentFaultyJoint === 'elbow' && isElbow) ||
+          (currentFaultyJoint === 'hip' && isHip) ||
+          (currentFaultyJoint === 'shoulder' && isShoulder)
+        );
+
+        ctx.save();
+        const baseRadius = (isFaulty ? 6.5 : 5.0) * dpr;
+
+        // Outer glow halo ring
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, baseRadius + 2.5 * dpr, 0, Math.PI * 2);
+        ctx.fillStyle = isFaulty ? 'rgba(244, 63, 94, 0.3)' : 'rgba(16, 185, 129, 0.25)';
+        ctx.fill();
+
+        // Inner solid bead
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, baseRadius, 0, Math.PI * 2);
+        ctx.fillStyle = isFaulty ? '#F43F5E' : '#10B981';
+        ctx.fill();
+
+        // Center white core
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, baseRadius * 0.45, 0, Math.PI * 2);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fill();
+
+        // Pulsing warning beacon if faulty
+        if (isFaulty) {
+          const pulse = (Date.now() % 1000) / 1000;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, baseRadius + pulse * 14 * dpr, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(244, 63, 94, ${1 - pulse})`;
+          ctx.lineWidth = 1.8 * dpr;
+          ctx.stroke();
+        }
+        ctx.restore();
+      });
+
+      // Render floating sleek glassmorphic angle pill badges near primary joints
+      const primaryIdx = (currentActiveSide === 'left') ? 13 : 14; // Default elbow
+      let angleVal = currentAngles.elbow;
+      let angleLabel = (AppState.lang === 'ar') ? 'الكوع' : 'ELBOW';
+
+      if (currentAngles.knee !== undefined) {
+        const kneeIdx = (currentActiveSide === 'left') ? 25 : 26;
+        if (pts[kneeIdx] && pts[kneeIdx].v > 0.4) {
+          drawFloatingAnglePill(ctx, pts[kneeIdx].x, pts[kneeIdx].y, currentAngles.knee, (AppState.lang === 'ar') ? 'الركبة' : 'KNEE', currentFaultyJoint === 'knee', dpr);
+        }
+      }
+      if (currentAngles.elbow !== undefined && pts[primaryIdx] && pts[primaryIdx].v > 0.4) {
+        drawFloatingAnglePill(ctx, pts[primaryIdx].x, pts[primaryIdx].y, currentAngles.elbow, angleLabel, currentFaultyJoint === 'elbow', dpr);
+      }
+    }
+
+    function drawFloatingAnglePill(ctx, x, y, angleVal, label, isFaulty, dpr) {
+      if (angleVal === undefined || isNaN(angleVal)) return;
+
+      const text = `${Math.round(angleVal)}°`;
+      ctx.save();
+      ctx.font = `bold ${11 * dpr}px 'Chakra Petch', monospace`;
+      const textMetrics = ctx.measureText(text);
+      const padX = 8 * dpr;
+      const badgeW = textMetrics.width + padX * 2 + (isFaulty ? 12 * dpr : 0);
+      const badgeH = 22 * dpr;
+      const bx = x + 12 * dpr;
+      const by = y - badgeH / 2;
+
+      // Subtle connector line to the joint
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(bx, by + badgeH / 2);
+      ctx.strokeStyle = isFaulty ? '#F43F5E' : 'rgba(16, 185, 129, 0.6)';
+      ctx.lineWidth = 1.2 * dpr;
+      ctx.stroke();
+
+      // Rounded pill badge
+      ctx.beginPath();
+      ctx.roundRect(bx, by, badgeW, badgeH, 6 * dpr);
+      ctx.fillStyle = isFaulty ? 'rgba(244, 63, 94, 0.95)' : 'rgba(15, 23, 42, 0.88)';
+      ctx.fill();
+      ctx.strokeStyle = isFaulty ? '#FFFFFF' : 'rgba(16, 185, 129, 0.6)';
+      ctx.lineWidth = 1 * dpr;
+      ctx.stroke();
+
+      // Pill text
+      ctx.fillStyle = '#FFFFFF';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, bx + padX, by + badgeH / 2);
+
+      // Warning exclamation mark if faulty
+      if (isFaulty) {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillText('⚠', bx + badgeW - 14 * dpr, by + badgeH / 2);
+      }
+
+      ctx.restore();
+    }
+
+    function startSessionTimer() {
+      if (AppState.sessionTimerInterval) clearInterval(AppState.sessionTimerInterval);
+      AppState.sessionStartTimestamp = Date.now();
+      AppState.sessionTimerInterval = setInterval(() => {
+        const elapsedSec = Math.floor((Date.now() - AppState.sessionStartTimestamp) / 1000);
+        const mins = String(Math.floor(elapsedSec / 60)).padStart(2, '0');
+        const secs = String(elapsedSec % 60).padStart(2, '0');
+        document.getElementById('liveTimer').textContent = `${mins}:${secs}`;
+      }, 1000);
+    }
+
+    async function resetCurrentSession() {
+      AppState.totalReps = 0;
+      AppState.holdSeconds = 0;
+      lastAnnouncedRep = 0;
+      targetRomPct = 0;
+      smoothRomPct = 0;
+      AppState.sessionStartTimestamp = Date.now();
+      document.getElementById('mainRepCounter').textContent = '0';
+      document.getElementById('romProgressBar').style.width = '0%';
+      document.getElementById('romPercentage').textContent = '0%';
+      document.getElementById('latestScoreVal').textContent = '--';
+
+      try {
+        await fetch('/api/control', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'reset' })
+        });
+      } catch (e) {}
+    }
+
+    async function finishAndSaveSession() {
+      const sessionId = 'session_' + Date.now();
+      try {
+        const res = await fetch('/api/session/complete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            session_id: sessionId,
+            user_id: 'athlete_demo',
+            exercise_type: AppState.selectedExercise,
+            rep_count: AppState.totalReps,
+            avg_score: 85.0
+          })
+        });
+        if (res.ok) {
+          alert(AppState.lang === 'ar' ? 'تم حفظ التمرينة بنجاح في قاعدة البيانات!' : 'Workout logged successfully!');
+        }
+      } catch (e) {}
+    }
+
+    // =================================================================
+    // VIDEO LAB (UPLOAD & ANALYSIS)
+    // =================================================================
+    function handleDragOver(e) {
+      e.preventDefault();
+      document.getElementById('dropZone').classList.add('border-app-emerald', 'bg-app-surface/50');
+    }
+
+    function handleDragLeave(e) {
+      e.preventDefault();
+      document.getElementById('dropZone').classList.remove('border-app-emerald', 'bg-app-surface/50');
+    }
+
+    function handleFileDrop(e) {
+      e.preventDefault();
+      document.getElementById('dropZone').classList.remove('border-app-emerald', 'bg-app-surface/50');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        processSelectedVideoFile(e.dataTransfer.files[0]);
+      }
+    }
+
+    document.getElementById('dropZone').addEventListener('click', () => {
+      document.getElementById('videoFileInput').click();
+    });
+
+    function handleFileSelected(e) {
+      if (e.target.files && e.target.files[0]) {
+        processSelectedVideoFile(e.target.files[0]);
+      }
+    }
+
+    function processSelectedVideoFile(file) {
+      AppState.selectedVideoFile = file;
+      document.getElementById('selectedFileName').textContent = `${file.name} (${(file.size / (1024*1024)).toFixed(1)} MB)`;
+      document.getElementById('selectedFileInfo').classList.remove('hidden');
+      document.getElementById('selectedFileInfo').classList.add('flex');
+      
+      const btn = document.getElementById('startAnalyzeBtn');
+      btn.disabled = false;
+      btn.classList.remove('opacity-40', 'cursor-not-allowed');
+    }
+
+    async function uploadAndAnalyzeVideo() {
+      if (!AppState.selectedVideoFile || AppState.isAnalyzingVideo) return;
+      AppState.isAnalyzingVideo = true;
+
+      const btn = document.getElementById('startAnalyzeBtn');
+      btn.disabled = true;
+      btn.classList.add('opacity-40');
+
+      const progressContainer = document.getElementById('analyzeProgressContainer');
+      const progressBar = document.getElementById('analyzeProgressBar');
+      const progressPercent = document.getElementById('analyzeProgressPercent');
+      const reportCard = document.getElementById('analysisReportCard');
+
+      progressContainer.classList.remove('hidden');
+      reportCard.classList.add('hidden');
+
+      let p = 15;
+      progressBar.style.width = '15%';
+      progressPercent.textContent = '15%';
+      const interval = setInterval(() => {
+        if (p < 88) {
+          p += 6;
+          progressBar.style.width = `${p}%`;
+          progressPercent.textContent = `${p}%`;
+        }
+      }, 350);
+
+      const formData = new FormData();
+      formData.append('file', AppState.selectedVideoFile);
+      formData.append('exercise', AppState.selectedExercise);
+      formData.append('lang', AppState.lang);
+
+      try {
+        const response = await fetch('/api/video/analyze', {
+          method: 'POST',
+          body: formData
+        });
+
+        clearInterval(interval);
+        progressBar.style.width = '100%';
+        progressPercent.textContent = '100%';
+
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.detail || 'Analysis failed');
+        }
+
+        const report = await response.json();
+        renderAnalysisReport(report);
+      } catch (err) {
+        clearInterval(interval);
+        alert(AppState.lang === 'ar' ? 'فشل تحليل الفيديو: ' + err.message : 'Analysis failed: ' + err.message);
+      } finally {
+        AppState.isAnalyzingVideo = false;
+        btn.disabled = false;
+        btn.classList.remove('opacity-40');
+        setTimeout(() => progressContainer.classList.add('hidden'), 500);
+      }
+    }
+
+    function renderAnalysisReport(report) {
+      const card = document.getElementById('analysisReportCard');
+      card.classList.remove('hidden');
+      card.scrollIntoView({ behavior: 'smooth' });
+
+      const pill = document.getElementById('verdictPill');
+      const icon = document.getElementById('verdictIcon');
+      const label = document.getElementById('verdictLabel');
+      const sub = document.getElementById('verdictSubText');
+
+      label.textContent = report.verdict_label;
+      sub.textContent = report.verdict_sub;
+
+      if (report.verdict === 'PASS') {
+        pill.className = 'px-5 py-2.5 rounded-xl border flex items-center gap-3 bg-app-emerald/15 border-app-emerald text-app-emerald';
+        icon.setAttribute('data-lucide', 'check-circle');
+      } else {
+        pill.className = 'px-5 py-2.5 rounded-xl border flex items-center gap-3 bg-app-rose/15 border-app-rose text-app-rose';
+        icon.setAttribute('data-lucide', 'alert-circle');
+      }
+
+      document.getElementById('reportScoreVal').textContent = `${report.form_score}%`;
+      const isPlank = (report.exercise_type === 'hold');
+      document.getElementById('reportRepsVal').textContent = isPlank ? `${report.hold_seconds}s` : report.reps_completed;
+      document.getElementById('repsMetricLabel').textContent = isPlank 
+        ? (AppState.lang === 'ar' ? 'مدة الثبات المحققة' : 'Hold Time Achieved')
+        : (AppState.lang === 'ar' ? 'إجمالي التكرارات المكتملة' : 'Completed Reps');
+
+      document.getElementById('reportDurationVal').textContent = `${report.duration_seconds}s`;
+      document.getElementById('framesMetricSub').textContent = `${report.total_frames_analyzed} FRAMES`;
+
+      const mistakesDiv = document.getElementById('mistakesContainer');
+      mistakesDiv.innerHTML = '';
+      if (report.key_mistakes && report.key_mistakes.length > 0) {
+        report.key_mistakes.forEach(m => {
+          const item = document.createElement('div');
+          item.className = 'p-2.5 rounded-lg bg-app-card border border-app-rose/30 flex items-start gap-2.5 text-xs';
+          item.innerHTML = `
+            <i data-lucide="x" class="w-4 h-4 text-app-rose shrink-0 mt-0.5"></i>
+            <div class="flex-1">
+              <span class="text-white font-medium">${m.description}</span>
+              <span class="mono-num text-[10px] text-gray-400 block mt-0.5">${m.occurrences} instances recorded</span>
+            </div>
+          `;
+          mistakesDiv.appendChild(item);
+        });
+      } else {
+        mistakesDiv.innerHTML = `
+          <div class="p-3 rounded-lg bg-app-card border border-app-border text-xs text-gray-400 flex items-center gap-2">
+            <i data-lucide="check" class="w-4 h-4 text-app-emerald"></i>
+            <span>${I18N[AppState.lang].noMistakes}</span>
+          </div>
+        `;
+      }
+
+      const tipsDiv = document.getElementById('actionTipsContainer');
+      tipsDiv.innerHTML = '';
+      if (report.actionable_tips && report.actionable_tips.length > 0) {
+        report.actionable_tips.forEach(tip => {
+          const item = document.createElement('div');
+          item.className = 'p-2.5 rounded-lg bg-app-card border border-app-emerald/30 flex items-start gap-2.5 text-xs';
+          item.innerHTML = `
+            <i data-lucide="arrow-right-circle" class="w-4 h-4 text-app-emerald shrink-0 mt-0.5"></i>
+            <span class="text-gray-200 font-medium">${tip}</span>
+          `;
+          tipsDiv.appendChild(item);
+        });
+      } else {
+        tipsDiv.innerHTML = `
+          <div class="p-3 rounded-lg bg-app-card border border-app-border text-xs text-gray-400 flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4 text-app-emerald"></i>
+            <span>${I18N[AppState.lang].noMistakesTip}</span>
+          </div>
+        `;
+      }
+
+      const breakdownDiv = document.getElementById('repBreakdownContainer');
+      breakdownDiv.innerHTML = '';
+      if (report.rep_breakdown && report.rep_breakdown.length > 0) {
+        report.rep_breakdown.forEach(r => {
+          const item = document.createElement('div');
+          item.className = 'p-3 rounded-lg bg-app-card border border-app-border space-y-1';
+          item.innerHTML = `
+            <div class="flex items-center justify-between text-xs">
+              <span class="mono-num font-bold text-white">REP #${r.rep_number}</span>
+              <span class="mono-num text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                r.score >= 80 ? 'bg-app-emerald/20 text-app-emeraldLight' : 'bg-app-rose/20 text-app-rose'
+              }">
+                ${r.score}%
+              </span>
+            </div>
+            <p class="text-[11px] text-gray-400 leading-snug line-clamp-2">${r.feedback || r.status}</p>
+          `;
+          breakdownDiv.appendChild(item);
+        });
+      } else {
+        breakdownDiv.innerHTML = `
+          <div class="col-span-full p-3 rounded-lg bg-app-card text-xs text-gray-400 text-center mono-num">
+            ${isPlank ? 'Continuous isometric hold analyzed' : 'No repetition segments captured'}
+          </div>
+        `;
+      }
+
+      lucide.createIcons();
+    }
+  </script>
+</body>
+</html>
