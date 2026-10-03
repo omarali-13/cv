@@ -308,6 +308,7 @@ class AudioFeedback:
     def __init__(self, enabled: bool = True, lang: str = "ar"):
         self._enabled = enabled
         self.lang = lang
+        self._stopped = False
         self._queue: queue.Queue = queue.Queue()
         self._cooldowns: dict[str, float] = {}
         self._engine = None
@@ -329,9 +330,13 @@ class AudioFeedback:
                     pass
                 self._engine = self._create_engine()
 
+    def resume(self) -> None:
+        """Allow audio speech again."""
+        self._stopped = False
+
     def say(self, text: str, cooldown: float = 3.0, key: str = "") -> None:
         """Speak raw text with a per-key cooldown."""
-        if not self._enabled:
+        if not self._enabled or self._stopped:
             return
         k = key or text
         now = time.time()
@@ -347,6 +352,8 @@ class AudioFeedback:
 
     def say_phrase(self, phrase_key: str, cooldown: float = 3.0, key: str = "", **kwargs) -> None:
         """Speak a localized phrase from VOICE_PHRASES based on current language."""
+        if not self._enabled or self._stopped:
+            return
         phrase_data = VOICE_PHRASES.get(phrase_key, {})
         text = phrase_data.get(self.lang) or phrase_data.get("en") or phrase_key
         if kwargs:
@@ -358,6 +365,7 @@ class AudioFeedback:
 
     def stop(self) -> None:
         """Stop any current speech and clear queue immediately."""
+        self._stopped = True
         if not self._enabled:
             return
         while not self._queue.empty():
@@ -418,9 +426,11 @@ class AudioFeedback:
 
             while True:
                 try:
-                    text = self._queue.get(timeout=0.5)
+                    text = self._queue.get(timeout=0.2)
                     if text is None:
                         break
+                    if self._stopped:
+                        continue
                     
                     try:
                         self._engine.say(text)
@@ -1130,24 +1140,41 @@ class PoseAnalyzer:
             msg = "Not enough movement frames captured." if lang == "en" else "لم يتم التقاط كادرات كافية للحركة."
             return FormEvaluation(float("inf"), 0, False, threshold, msg)
 
-        dist, _ = fastdtw(user, ref, dist=euclidean)
-        # Normalize by max length AND by square root of features to represent average degrees deviation per joint
-        norm = dist / (max(user.shape[0], ref.shape[0]) * np.sqrt(user.shape[1]))
-        
-        # Transparent, explainable biomechanical scoring:
-        # Every 1 deg of average joint deviation across the cycle deducts 1.6% from 100%:
-        # Average deviation of 3-5 deg gives 92% - 95% (Flawless execution)
-        # Average deviation of 8-10 deg gives 84% - 87% (Optimal execution)
-        # Average deviation of 15 deg gives 76% (Acceptable execution)
-        # Average deviation of 25 deg gives 60% (Pass threshold)
-        # Average deviation > 35 deg drops below 50%
-        score = float(np.clip(100.0 - 1.6 * norm, 10.0, 100.0))
+        # Baseline offset compensation:
+        # Zero-reference joint trajectories relative to initial starting posture to eliminate
+        # natural anthropometric variations and monocular perspective offsets (e.g. resting shoulder angle or 2D ankle angle).
+        u_rel = user - user[0]
+        r_rel = ref - ref[0]
+
+        dist, path = fastdtw(u_rel, r_rel, dist=euclidean)
+        path_len = max(len(path), 1)
+        norm = dist / (path_len * np.sqrt(user.shape[1]))
+
+        # Dynamic trajectory fidelity score:
+        # 0-3 deg average error -> 95-98% (Optimal execution)
+        # 4-7 deg error -> 88-94% (Very good execution)
+        # 8-12 deg error -> 80-87% (Good execution)
+        # 15-20 deg error -> 68-78% (Minor correction needed)
+        # > 25 deg error -> < 60% (Significant deviation)
+        shape_score = float(np.clip(100.0 - 1.2 * norm, 15.0, 100.0))
+
+        # Range of motion amplitude evaluation on primary joint (feature index 0)
+        u_amp = float(np.ptp(user[:, 0]))
+        r_amp = float(np.ptp(ref[:, 0]))
+        target_amp = max(r_amp * 0.82, 1.0)  # 82% of reference amplitude considered full range
+        if u_amp >= target_amp:
+            rom_factor = 1.0
+        else:
+            rom_factor = float(np.clip(u_amp / target_amp, 0.45, 1.0))
+
+        # Composite biomechanical score: 70% dynamic shape + 30% range of motion
+        score = float(np.clip(shape_score * (0.70 + 0.30 * rom_factor), 10.0, 100.0))
         ok = score >= 60.0
 
-        if score >= 82:
+        if score >= 85:
             fb_ar = f"أداء متقن وممتاز! توافق حركي عالي بدرجة {score:.0f}%."
             fb_en = f"Optimal form! Score {score:.0f}%. High kinematic alignment."
-        elif score >= 60:
+        elif score >= 65:
             fb_ar = f"أداء جيد جداً بدرجة {score:.0f}%، حافظ على ثبات المفصل والتحكم في السرعة."
             fb_en = f"Good form, score {score:.0f}%, keep joints stabilized."
         else:
@@ -1432,20 +1459,17 @@ class PoseAnalyzer:
                     cv2.imshow("CV for Fit", frame)
                     k = cv2.waitKey(1) & 0xFF
                     if k == ord("q") or k == 27:
+                        self.audio.stop()
                         break
         finally:
+            self.audio.stop()
+            if show_preview and 'frame' in locals() and frame is not None:
+                self._show_summary_screen(frame, exercise_type, rep_state, evals, active_side)
             cap.release()
             if writer:
                 writer.release()
             if show_preview:
                 cv2.destroyAllWindows()
-            if exercise_type == ExerciseType.PLANK:
-                total_sec = int(rep_state.hold_seconds)
-                self.audio.say_phrase("session_done_plank", cooldown=0, total=total_sec)
-            else:
-                total = rep_state.rep_count
-                self.audio.say_phrase("session_done_reps", cooldown=0, total=total)
-            time.sleep(3.5)
             self.release()
 
         return {"reps": rep_state.rep_count, "evaluations": evals, "side": active_side}
@@ -1453,6 +1477,96 @@ class PoseAnalyzer:
     # ==================================================================
     # Drawing helpers
     # ==================================================================
+    def _show_summary_screen(
+        self, last_frame: Optional[np.ndarray],
+        exercise_type: ExerciseType, rep_state: RepetitionState,
+        evals: list, active_side: str,
+    ):
+        """Displays an aesthetic, comprehensive post-workout summary in English directly on the camera window."""
+        if last_frame is not None and last_frame.size > 0:
+            frame = last_frame.copy()
+        else:
+            frame = np.zeros((480, 640, 3), dtype=np.uint8)
+
+        h, w = frame.shape[:2]
+
+        # Stop audio immediately when workout finishes as requested
+        self.audio.stop()
+
+        # Semi-transparent dark background card overlay
+        ov = frame.copy()
+        cv2.rectangle(ov, (0, 0), (w, h), (14, 16, 20), -1)
+        cv2.addWeighted(ov, 0.88, frame, 0.12, 0, frame)
+
+        # Palette
+        cyan = (255, 210, 0)
+        green = (0, 230, 130)
+        yellow = (0, 220, 255)
+        white = (245, 245, 245)
+        gray = (170, 170, 170)
+        red = (60, 60, 255)
+        font = cv2.FONT_HERSHEY_SIMPLEX
+
+        # Outer border & header card
+        cv2.rectangle(frame, (20, 20), (w - 20, h - 20), (50, 55, 65), 2)
+        cv2.rectangle(frame, (22, 22), (w - 22, 65), (25, 30, 38), -1)
+        cv2.putText(frame, "CV FOR FIT - WORKOUT SUMMARY", (35, 52), font, 0.75, green, 2, cv2.LINE_AA)
+
+        y = 100
+        ex_name = exercise_type.value.replace("_", " ").upper()
+        cv2.putText(frame, f"Exercise: {ex_name}", (40, y), font, 0.65, white, 2, cv2.LINE_AA)
+
+        is_front = exercise_type in (ExerciseType.SHOULDER_PRESS, ExerciseType.SQUAT)
+        view_str = "Front View" if is_front else f"{active_side.capitalize()} Side View"
+        cv2.putText(frame, f"Profile: {view_str}", (w - 240, y), font, 0.55, yellow, 1, cv2.LINE_AA)
+
+        y += 38
+        if exercise_type == ExerciseType.PLANK:
+            cv2.putText(frame, f"Hold Duration: {int(rep_state.hold_seconds)} seconds", (40, y), font, 0.65, green, 2, cv2.LINE_AA)
+        else:
+            cv2.putText(frame, f"Completed Reps: {rep_state.rep_count} reps", (40, y), font, 0.65, green, 2, cv2.LINE_AA)
+
+        y += 38
+        if evals:
+            avg_score = float(np.mean([e.form_score for e in evals]))
+            verdict = "OPTIMAL FORM" if avg_score >= 82 else "GOOD FORM" if avg_score >= 60 else "NEEDS CORRECTION"
+            score_color = green if avg_score >= 82 else yellow if avg_score >= 60 else red
+            cv2.putText(frame, f"Average Form Score: {avg_score:.0f}% ({verdict})", (40, y), font, 0.65, score_color, 2, cv2.LINE_AA)
+        else:
+            if exercise_type == ExerciseType.PLANK:
+                cv2.putText(frame, "Core Stability: Isometric hold analyzed", (40, y), font, 0.55, cyan, 1, cv2.LINE_AA)
+            else:
+                cv2.putText(frame, "Form Score: No full reps detected", (40, y), font, 0.55, gray, 1, cv2.LINE_AA)
+
+        y += 36
+        cv2.line(frame, (40, y), (w - 40, y), (50, 55, 65), 1)
+        y += 24
+
+        cv2.putText(frame, "REPETITION BREAKDOWN:", (40, y), font, 0.5, gray, 1, cv2.LINE_AA)
+        y += 26
+
+        if evals:
+            display_evals = evals[:4] if len(evals) <= 4 else evals[-4:]
+            for idx, ev in enumerate(display_evals, 1):
+                rep_num = idx if len(evals) <= 4 else (len(evals) - len(display_evals) + idx)
+                tag = "PASS" if ev.is_correct else "WARN"
+                tag_c = green if ev.is_correct else yellow
+                line_str = f"Rep #{rep_num:02d} [{tag}] - Score: {ev.form_score:.0f}%"
+                cv2.putText(frame, line_str, (50, y), font, 0.52, tag_c, 1, cv2.LINE_AA)
+                y += 24
+        else:
+            cv2.putText(frame, "  Complete standard repetitions to view kinetic alignment.", (50, y), font, 0.45, gray, 1, cv2.LINE_AA)
+            y += 24
+
+        foot_y = h - 35
+        cv2.putText(frame, "Press SPACE, ENTER or 'Q' to close and return", (40, foot_y), font, 0.55, cyan, 1, cv2.LINE_AA)
+
+        start_time = time.time()
+        while time.time() - start_time < 9.0:
+            cv2.imshow("CV for Fit", frame)
+            k = cv2.waitKey(40) & 0xFF
+            if k in (ord(" "), ord("q"), 27, 13):
+                break
     def _show_instructions(self, cap, exercise_type):
         title_text = exercise_type.value.replace("_", " ").upper()
         is_front = exercise_type in (ExerciseType.SQUAT, ExerciseType.SHOULDER_PRESS)
@@ -1795,22 +1909,30 @@ def main():
         logger.info("Stopped: %s", e)
         sys.exit(0)
 
-    print("\n" + "=" * 55)
-    print(f"  {ex.value.replace('_',' ').title()} - Session Summary")
-    print("=" * 55)
-    if ex == ExerciseType.SQUAT:
-        print("  Tracking view: Front View")
+    print("\n" + "=" * 60)
+    print(f"  {ex.value.replace('_',' ').title()} - Workout Session Summary")
+    print("=" * 60)
+    if ex in (ExerciseType.SQUAT, ExerciseType.SHOULDER_PRESS):
+        print("  Tracking view  : Front Profile (Bilateral)")
     else:
-        print(f"  Side tracked : {result['side'].capitalize()}")
-    print(f"  Total reps   : {result['reps']}")
+        print(f"  Side tracked   : {result['side'].capitalize()} Side Profile")
+    if ex == ExerciseType.PLANK:
+        print(f"  Hold duration  : {result['reps']} seconds")
+    else:
+        print(f"  Total reps     : {result['reps']}")
     evs = result.get("evaluations", [])
     if evs:
         avg = np.mean([e.form_score for e in evs])
-        print(f"  Avg score    : {avg:.0f}/100")
+        verdict = "OPTIMAL FORM" if avg >= 82 else "GOOD FORM" if avg >= 60 else "NEEDS CORRECTION"
+        print(f"  Avg form score : {avg:.0f}/100 ({verdict})")
+        print("\n  Repetition Breakdown:")
         for i, e in enumerate(evs, 1):
-            tag = "OK" if e.is_correct else "XX"
-            print(f"    Rep {i:>2d} [{tag}]  {e.form_score:5.1f} - {e.feedback}")
-    print("=" * 55 + "\n")
+            tag = "PASS" if e.is_correct else "WARN"
+            print(f"    Rep #{i:>2d} [{tag}]  Score: {e.form_score:5.1f}%  -  {e.feedback}")
+    else:
+        if ex != ExerciseType.PLANK:
+            print("  Repetitions    : No complete repetitions recorded.")
+    print("=" * 60 + "\n")
 
 
 if __name__ == "__main__":

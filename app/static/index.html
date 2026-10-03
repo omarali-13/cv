@@ -1359,6 +1359,7 @@
     }
 
     async function resetCurrentSession() {
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
       AppState.totalReps = 0;
       AppState.holdSeconds = 0;
       lastAnnouncedRep = 0;
@@ -1380,6 +1381,7 @@
     }
 
     async function finishAndSaveSession() {
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
       const sessionId = 'session_' + Date.now();
       try {
         const res = await fetch('/api/session/complete', {

@@ -122,18 +122,34 @@ if not exist "%source%" (
 
 :launch_engine
 echo.
-echo    ====================================
+echo    ====================================================
 echo       Starting live analysis for: %exercise%
-echo       Press 'q' or Esc to stop.
-echo    ====================================
+echo       Mode: Desktop Camera Window (English Summary)
+echo       Press 'q' or Esc to stop workout.
+echo    ====================================================
 echo.
 
-%PYTHON_EXE% "%~dp0cv_engine.py" --source "%source%" --exercise %exercise%
+%PYTHON_EXE% "%~dp0cv_engine.py" --source "%source%" --exercise %exercise% --lang en
 
 echo.
-echo    ====================================
-echo       Session finished.
-echo    ====================================
+echo    ====================================================
+echo               WORKOUT SESSION FINISHED
+echo    ====================================================
 echo.
-pause
-exit /b 0
+echo    [OK] Camera analysis session ended successfully.
+echo    [INFO] Repetition analysis and form scores displayed above.
+echo.
+echo    ----------------------------------------------------
+echo       [1] Choose another exercise
+echo       [2] Return to main menu
+echo       [3] Exit
+echo    ----------------------------------------------------
+echo.
+
+:ask_after
+set /p "after_choice=    Enter choice (1, 2 or 3): "
+if "%after_choice%"=="1" goto choose_exercise
+if "%after_choice%"=="2" goto choose_mode
+if "%after_choice%"=="3" exit /b 0
+echo    [!] Invalid choice. Please enter 1, 2 or 3.
+goto ask_after
