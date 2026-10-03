@@ -62,7 +62,12 @@ class CameraManager:
         self.current_exercise = ExerciseType.BICEP_CURL
         self.lang = "ar"
         self.session: Optional[RemoteSession] = None
-        self.latest_jpeg: Optional[bytes] = None
+        # Pre-seed latest_jpeg with an initial clean placeholder so /video_feed is never null
+        placeholder = np.zeros((480, 640, 3), dtype=np.uint8)
+        cv2.putText(placeholder, "Starting CV Engine / Loading Camera...", (70, 240),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 230, 150), 2)
+        _, buf = cv2.imencode('.jpg', placeholder, [cv2.IMWRITE_JPEG_QUALITY, 80])
+        self.latest_jpeg: Optional[bytes] = buf.tobytes()
         self.worker_thread: Optional[threading.Thread] = None
         self.rep_count = 0
         self.hold_seconds = 0.0
@@ -161,7 +166,14 @@ class CameraManager:
     def _capture_loop(self):
         logger.info("Initializing CameraManager direct capture thread...")
         try:
-            self.cap = cv2.VideoCapture(0)
+            # On Windows, DirectShow opens the webcam near-instantly (<300ms)
+            try:
+                self.cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+                if not self.cap or not self.cap.isOpened():
+                    self.cap = cv2.VideoCapture(0)
+            except Exception:
+                self.cap = cv2.VideoCapture(0)
+
             self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
             self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
             self.cap.set(cv2.CAP_PROP_FPS, 30)
@@ -175,7 +187,12 @@ class CameraManager:
                     with self.lock:
                         self.latest_jpeg = buf.tobytes()
                     time.sleep(0.5)
-                    self.cap.open(0)
+                    try:
+                        self.cap.open(0, cv2.CAP_DSHOW)
+                        if not self.cap.isOpened():
+                            self.cap.open(0)
+                    except Exception:
+                        self.cap.open(0)
                     continue
 
                 ret, frame = self.cap.read()
@@ -183,48 +200,52 @@ class CameraManager:
                     time.sleep(0.03)
                     continue
 
-                ts_ms = int(time.time() * 1000)
-                with self.lock:
-                    session = self.session
+                # Protect frame evaluation so any single frame issue never kills video streaming
+                try:
+                    ts_ms = int(time.time() * 1000)
+                    with self.lock:
+                        session = self.session
 
-                if session is not None:
-                    raw_lm = session.analyzer.extract_landmarks(frame, ts_ms)
-                    if raw_lm is not None:
-                        lm_mocks = [
-                            LandmarkMock(p.x, p.y, p.z, getattr(p, "visibility", 1.0))
-                            for p in raw_lm
-                        ]
-                        res = session._evaluate_landmarks(lm_mocks)
-                        with self.lock:
-                            self.rep_count = res.get("rep_count", 0)
-                            self.hold_seconds = res.get("hold_seconds", 0.0)
-                            self.is_holding = res.get("is_holding", False)
-                            self.progress_pct = res.get("progress_pct", 0.0)
-                            self.phase = res.get("phase", "IDLE")
-                            self.angles = res.get("angles") or {}
-                            self.active_side = res.get("active_side", "left")
-                            self.tip_text = res.get("coaching_tip", "")
-                            self.faulty_joint = res.get("faulty_joint", "")
-                            self.has_mistake = res.get("has_mistake", False)
-                            if res.get("announcement"):
-                                self.pending_announcement = res.get("announcement")
-                            if res.get("new_rep") and res.get("latest_score") is not None:
-                                self.latest_score = res.get("latest_score")
-                                self.latest_feedback = res.get("latest_feedback", "")
-
-                            # Export normalized landmarks with rounded coordinates for fast JSON transfer
-                            self.latest_landmarks = [
-                                {
-                                    "x": round(float(p.x), 4),
-                                    "y": round(float(p.y), 4),
-                                    "z": round(float(p.z), 4),
-                                    "v": round(float(getattr(p, "visibility", 1.0)), 2)
-                                }
+                    if session is not None:
+                        raw_lm = session.analyzer.extract_landmarks(frame, ts_ms)
+                        if raw_lm is not None:
+                            lm_mocks = [
+                                LandmarkMock(p.x, p.y, p.z, getattr(p, "visibility", 1.0))
                                 for p in raw_lm
                             ]
-                    else:
-                        with self.lock:
-                            self.latest_landmarks = None
+                            res = session._evaluate_landmarks(lm_mocks)
+                            with self.lock:
+                                self.rep_count = res.get("rep_count", 0)
+                                self.hold_seconds = res.get("hold_seconds", 0.0)
+                                self.is_holding = res.get("is_holding", False)
+                                self.progress_pct = res.get("progress_pct", 0.0)
+                                self.phase = res.get("phase", "IDLE")
+                                self.angles = res.get("angles") or {}
+                                self.active_side = res.get("active_side", "left")
+                                self.tip_text = res.get("coaching_tip", "")
+                                self.faulty_joint = res.get("faulty_joint", "")
+                                self.has_mistake = res.get("has_mistake", False)
+                                if res.get("announcement"):
+                                    self.pending_announcement = res.get("announcement")
+                                if res.get("new_rep") and res.get("latest_score") is not None:
+                                    self.latest_score = res.get("latest_score")
+                                    self.latest_feedback = res.get("latest_feedback", "")
+
+                                # Export normalized landmarks with rounded coordinates for fast JSON transfer
+                                self.latest_landmarks = [
+                                    {
+                                        "x": round(float(p.x), 4),
+                                        "y": round(float(p.y), 4),
+                                        "z": round(float(p.z), 4),
+                                        "v": round(float(getattr(p, "visibility", 1.0)), 2)
+                                    }
+                                    for p in raw_lm
+                                ]
+                        else:
+                            with self.lock:
+                                self.latest_landmarks = None
+                except Exception as frame_err:
+                    logger.warning(f"Frame analysis warning: {frame_err}")
 
                 # Keep video clean: no pixelated OpenCV text or lines burned into the frame
                 _, jpeg = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 80])

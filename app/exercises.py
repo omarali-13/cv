@@ -115,6 +115,28 @@ class RemoteSession:
 
     def _evaluate_landmarks(self, landmarks: List[LandmarkMock]) -> Dict[str, Any]:
         """Core biomechanics analysis, angle extraction, and coaching generation."""
+        if not landmarks or len(landmarks) < 33:
+            return {
+                "rep_count": self.rep_state.rep_count,
+                "hold_seconds": round(self.rep_state.hold_seconds, 1),
+                "is_holding": self.rep_state.is_holding,
+                "progress_pct": round(self.rep_state.progress_pct, 1),
+                "phase": self.rep_state.phase,
+                "active_side": self.active_side,
+                "angles": {},
+                "orientation": self.orientation,
+                "coaching_tip": "",
+                "coaching_tip_ar": "",
+                "coaching_tip_en": "",
+                "tip_key": "",
+                "announcement": "",
+                "announcement_ar": "",
+                "announcement_en": "",
+                "faulty_joint": "",
+                "has_mistake": False,
+                "new_rep": False,
+            }
+
         self.orientation = self.analyzer.detect_orientation(landmarks)
 
         # Extract joint angles
@@ -149,6 +171,7 @@ class RemoteSession:
         tip_key = ""
         announcement_ar = ""
         announcement_en = ""
+        faulty_joint = ""
         new_rep = False
 
         if angles is not None:
