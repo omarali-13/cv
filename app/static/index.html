@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>CV for Fit — نظام التحليل الحركي والمدرب الذكي</title>
   
   <!-- Tailwind CSS CDN -->
@@ -793,6 +796,7 @@
 
     async function setAppLanguage(lang) {
       if (AppState.lang === lang) return;
+      stopAllAudio();
       AppState.lang = lang;
       
       const html = document.documentElement;
@@ -857,6 +861,7 @@
     }
 
     function toggleVoiceAudio() {
+      unlockAudioContext();
       AppState.audioEnabled = !AppState.audioEnabled;
       const t = I18N[AppState.lang];
       const icon = document.getElementById('audioIcon');
@@ -871,7 +876,7 @@
         icon.setAttribute('data-lucide', 'volume-x');
         icon.className = 'w-4 h-4 text-gray-400';
         label.textContent = t.audioOff;
-        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        stopAllAudio();
       }
       lucide.createIcons();
     }
@@ -887,23 +892,77 @@
       }
     }
 
+    // =================================================================
+    // DEDICATED HIGH-PERFORMANCE MALE COACH AUDIO ENGINE (0ms OVERLAP)
+    // =================================================================
+    const coachAudio = new Audio();
+    coachAudio.preload = 'auto';
+    let audioContextUnlocked = false;
+    let isCoachSpeaking = false;
+
+    // Instantly unlock audio playback on any initial user touch/click/key
+    function unlockAudioContext() {
+      if (audioContextUnlocked) return;
+      try {
+        const silent = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA");
+        silent.play().then(() => {
+          audioContextUnlocked = true;
+        }).catch(() => {});
+      } catch (e) {}
+    }
+    ['click', 'touchstart', 'pointerdown', 'keydown'].forEach(evt => {
+      document.addEventListener(evt, unlockAudioContext, { passive: true, once: true });
+    });
+
+    coachAudio.addEventListener('playing', () => { isCoachSpeaking = true; });
+    coachAudio.addEventListener('pause', () => { isCoachSpeaking = false; });
+    coachAudio.addEventListener('ended', () => { isCoachSpeaking = false; });
+    coachAudio.addEventListener('error', () => { isCoachSpeaking = false; });
+
+    function stopAllAudio() {
+      try {
+        coachAudio.pause();
+        coachAudio.currentTime = 0;
+        coachAudio.removeAttribute('src'); // Instantly aborts in-flight network request & buffers
+        coachAudio.load();
+      } catch (e) {}
+      isCoachSpeaking = false;
+    }
+
     function speakText(text, minCooldownSec = 2.5) {
-      if (!AppState.audioEnabled || !text || !('speechSynthesis' in window)) return;
+      if (!AppState.audioEnabled || !text) return;
       const now = Date.now();
+
+      // Avoid repeating identical cues within the cooldown window
       if (text === lastSpokenText && (now - lastSpokenTime) < (minCooldownSec * 1000)) {
         return;
       }
+      // If coach is actively speaking, allow at least 1.8 seconds between consecutive phrases
+      if (isCoachSpeaking && (now - lastSpokenTime) < 1800) {
+        return;
+      }
+
       lastSpokenText = text;
       lastSpokenTime = now;
 
+      // Abort previous phrase cleanly to eliminate overlaps (no audio colliding)
+      stopAllAudio();
+
       try {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 1.02;
-        utterance.pitch = 1.0;
-        utterance.lang = (AppState.lang === 'ar') ? 'ar-SA' : 'en-US';
-        window.speechSynthesis.speak(utterance);
-      } catch (e) {}
+        const audioUrl = `/api/tts?text=${encodeURIComponent(text)}&lang=${encodeURIComponent(AppState.lang)}`;
+        coachAudio.src = audioUrl;
+        coachAudio.volume = 1.0;
+        
+        const playPromise = coachAudio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(err => {
+            console.debug("Coach audio deferred until user gesture:", err);
+            isCoachSpeaking = false;
+          });
+        }
+      } catch (e) {
+        isCoachSpeaking = false;
+      }
     }
 
     function switchMode(mode) {
@@ -970,29 +1029,29 @@
       }
 
       // 2. Rep count announcement: ONLY announce every 2 reps (2, 4, 6, 8, 10...)
-      // The user explicitly requested: "مش لازم عده يقلها يعني خليه بعد كل عدتين يقول"
+      // Energetic, authentic male personal trainer cadence
       const reps = data.rep_count || 0;
       if (reps > 0 && reps !== lastAnnouncedRep && reps % 2 === 0) {
         lastAnnouncedRep = reps;
         let phrase = '';
         if (AppState.lang === 'ar') {
           const phrases = {
-            2: "عدتان، ممتاز! واصل بنفس الإيقاع.",
-            4: "أربع عدات، عاش يا بطل!",
-            6: "ست عدات، أداء بطولي كمل!",
-            8: "ثماني عدات، ثبات رائع!",
-            10: "عشر عدات كاملة، وحش واصل!",
+            2: "عاش يا بطل! عدتين بمستوى ممتاز، كمّل بنفس الثبات.",
+            4: "أربع عدات حديد! تنفّس بانتظام وظبط الإيقاع، ولا توقف.",
+            6: "ست عدات نار! قوة وتركيز عالي، المدى الحركي كامل كدا.",
+            8: "تمان عدات أبطال! وحش.. كمل لآخر نفس ولا تستسلم!",
+            10: "عشرة كاملين عاش يا وحش! فورمة وبطولة، إنهاء قوي!",
           };
-          phrase = phrases[reps] || `العدة رقم ${reps}، استمر بنفس القوة!`;
+          phrase = phrases[reps] || `${reps} عدات احترافية! أداء أسطوري، واصل يا كابتن!`;
         } else {
           const phrases = {
-            2: "Two reps down, great rhythm!",
-            4: "Four reps, strong and steady!",
-            6: "Six reps, keep pushing!",
-            8: "Eight reps, excellent control!",
-            10: "Ten complete reps, outstanding work!",
+            2: "Two solid reps! Great rhythm, keep it tight.",
+            4: "Four clean reps, strong power! Breathe and maintain form.",
+            6: "Six reps down! Excellent depth and control, keep pushing!",
+            8: "Eight reps! Heroic stamina, don't let up now!",
+            10: "Ten complete reps! Championship form, finish strong!",
           };
-          phrase = phrases[reps] || `Rep ${reps}, keep the momentum!`;
+          phrase = phrases[reps] || `${reps} reps! Professional execution, stay locked in!`;
         }
         speakText(phrase, 2.0);
       }
@@ -1359,7 +1418,7 @@
     }
 
     async function resetCurrentSession() {
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      stopAllAudio();
       AppState.totalReps = 0;
       AppState.holdSeconds = 0;
       lastAnnouncedRep = 0;
@@ -1381,7 +1440,7 @@
     }
 
     async function finishAndSaveSession() {
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      stopAllAudio();
       const sessionId = 'session_' + Date.now();
       try {
         const res = await fetch('/api/session/complete', {

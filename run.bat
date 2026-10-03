@@ -61,7 +61,7 @@ echo    [OK] Starting CV for Fit Web Server...
 echo    [INFO] Opening dashboard at http://localhost:8000
 echo.
 start http://localhost:8000
-%PYTHON_EXE% -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+%PYTHON_EXE% -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 pause
 exit /b 0
 
@@ -108,7 +108,7 @@ echo.
 
 :ask_source
 set /p "source_choice=    Enter source (1 or 2): "
-if "%source_choice%"=="1" set "source=0" & goto launch_engine
+if "%source_choice%"=="1" set "source=0" & goto choose_coach_lang
 if "%source_choice%"=="2" goto ask_file
 echo    [!] Invalid choice. Please enter 1 or 2.
 goto ask_source
@@ -120,16 +120,29 @@ if not exist "%source%" (
     goto ask_source
 )
 
+:choose_coach_lang
+echo.
+echo    ------------------------------------
+echo       Choose Coach Voice Language
+echo    ------------------------------------
+echo       [1]  العربية (صوت كابتن مصري رجالي) - الافتراضي
+echo       [2]  English (American Male Coach)
+echo    ------------------------------------
+echo.
+set "coach_lang=ar"
+set /p "lang_choice=    Enter choice (1 or 2, default 1): "
+if "%lang_choice%"=="2" set "coach_lang=en"
+
 :launch_engine
 echo.
 echo    ====================================================
 echo       Starting live analysis for: %exercise%
-echo       Mode: Desktop Camera Window (English Summary)
+echo       Voice Coach: %coach_lang% (100%% Male)
 echo       Press 'q' or Esc to stop workout.
 echo    ====================================================
 echo.
 
-%PYTHON_EXE% "%~dp0cv_engine.py" --source "%source%" --exercise %exercise% --lang en
+%PYTHON_EXE% "%~dp0cv_engine.py" --source "%source%" --exercise %exercise% --lang %coach_lang%
 
 echo.
 echo    ====================================================

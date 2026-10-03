@@ -16,7 +16,7 @@ from fastapi import (
 )
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, StreamingResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, StreamingResponse, Response
 from pydantic import BaseModel
 
 # Add parent directory to path so we can import modules
@@ -25,6 +25,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app.exercises import RemoteSession, ExerciseType, LandmarkMock
 from app.dtw_evaluator import get_exercise_reference
 from app.database import save_workout_session
+from app.tts_helper import synthesize_speech_async
 from cv_engine import COACH_TIPS_I18N
 
 # Configure logging
@@ -294,7 +295,14 @@ class ExerciseInfo(BaseModel):
 def read_root():
     index_file = os.path.join(STATIC_DIR, "index.html")
     if os.path.exists(index_file):
-        return FileResponse(index_file)
+        return FileResponse(
+            index_file,
+            headers={
+                "Cache-Control": "no-cache, no-store, must-revalidate",
+                "Pragma": "no-cache",
+                "Expires": "0"
+            }
+        )
     return HTMLResponse("<h2>Welcome to CV for Fit Backend Engine API</h2>")
 
 @app.get("/video_feed")
@@ -355,6 +363,28 @@ def complete_session(request: SessionSaveRequest):
             detail="Failed to save workout session details to the database."
         )
     return {"status": "success", "message": "Workout session logged successfully."}
+
+@app.get("/api/tts")
+async def get_tts_audio(text: str, lang: str = "ar"):
+    """
+    Generate and stream ultra-realistic neural male voice audio.
+    Uses edge-tts with Shakir (Egyptian Male) for Arabic and Christopher for English.
+    Cached on disk so playback latency is near zero (0ms).
+    """
+    clean_text = text.strip()
+    if not clean_text:
+        raise HTTPException(status_code=400, detail="Empty text parameter.")
+    audio_bytes = await synthesize_speech_async(clean_text, lang=lang)
+    if not audio_bytes:
+        raise HTTPException(status_code=500, detail="Failed to synthesize neural audio.")
+    return Response(
+        content=audio_bytes,
+        media_type="audio/mpeg",
+        headers={
+            "Cache-Control": "public, max-age=86400",
+            "Accept-Ranges": "bytes"
+        }
+    )
 
 @app.post("/api/video/analyze")
 async def analyze_video(

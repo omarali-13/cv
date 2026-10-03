@@ -102,136 +102,136 @@ def _ensure_model() -> str:
 # Audio Feedback
 # ===================================================================
 VOICE_PHRASES = {
-    # Natural, realistic human coach counts every 2 reps (2, 4, 6, 8, 10...)
-    "rep_2": {"ar": "عدتان، ممتاز! حافظ على نفس الإيقاع والثبات.", "en": "Two reps down, great rhythm! Keep it steady."},
-    "rep_4": {"ar": "أربع عدات، عاش! تنفس بانتظام واصل التركيز.", "en": "Four reps, strong form! Breathe steadily and stay focused."},
-    "rep_6": {"ar": "ست عدات! أداء بطولي، استمر بنفس القوة والمدى الكامل.", "en": "Six reps! Excellent strength, maintain full range."},
-    "rep_8": {"ar": "ثماني عدات! ثبات رائع وعضلاتك مشدودة، واصل يا بطل!", "en": "Eight reps! Great stamina and clean execution, keep pushing!"},
-    "rep_10": {"ar": "عشر عدات كاملة! مجهود عظيم، واصل لآخر عدة!", "en": "Ten complete reps! Outstanding effort, finish strong!"},
-    "rep_even": {"ar": "{num} عدات ممتازة! أداء احترافي، كمل!", "en": "{num} clean reps! Professional form, keep going!"},
-    "rep_mistake": {"ar": "العدة السابقة غير مكتملة المدى الحركي، ركّز على العمق الصحيح.", "en": "Last rep had incomplete range, focus on reaching full depth."},
+    # Natural, realistic male human gym coach counts every 2 reps (2, 4, 6, 8, 10...)
+    "rep_2": {"ar": "عاش يا بطل! عدتين بمستوى ممتاز، كمّل بنفس الثبات.", "en": "Two solid reps! Great rhythm, keep it tight."},
+    "rep_4": {"ar": "أربع عدات حديد! تنفّس بانتظام وظبط الإيقاع، ولا توقف.", "en": "Four clean reps, strong power! Breathe and maintain form."},
+    "rep_6": {"ar": "ست عدات نار! قوة وتركيز عالي، المدى الحركي كامل كدا.", "en": "Six reps down! Excellent depth and control, keep pushing!"},
+    "rep_8": {"ar": "تمان عدات أبطال! وحش.. كمل لآخر نفس ولا تستسلم!", "en": "Eight reps! Heroic stamina, don't let up now!"},
+    "rep_10": {"ar": "عشرة كاملين عاش يا وحش! فورمة وبطولة، إنهاء قوي!", "en": "Ten complete reps! Championship form, finish strong!"},
+    "rep_even": {"ar": "{num} عدات احترافية! أداء أسطوري، واصل يا كابتن!", "en": "{num} reps! Professional execution, stay locked in!"},
+    "rep_mistake": {"ar": "انتبه! العدة اللي فاتت مداها الحركي ناقص، ركّز على العمق المطلوب.", "en": "Watch out! Last rep had incomplete range, focus on hitting full depth."},
 
     # Welcome / Setup
     "welcome_front": {
-        "ar": "أهلاً بك! يرجى الوقوف بمواجهة الكاميرا مباشرة، وابدأ عندما تكون مستعداً.",
-        "en": "Welcome! Please stand directly facing the camera, and begin when ready."
+        "ar": "أهلاً بك يا بطل! اقف في مواجهة الكاميرا مباشرة، وابدأ أول ما تكون جاهز.",
+        "en": "Welcome coach! Please face the camera directly, and start when you are ready."
     },
     "welcome_side": {
-        "ar": "أهلاً بك! يرجى الوقوف بالجنب للكاميرا، وابدأ عندما تكون مستعداً.",
-        "en": "Welcome! Please stand sideways to the camera, and begin when ready."
+        "ar": "أهلاً بك يا بطل! اقف بالجنب للكاميرا عشان نتابع الحركة بدقة، وابدأ لما تكون جاهز.",
+        "en": "Welcome coach! Please stand sideways to the camera, and start when you are ready."
     },
 
     # Plank
-    "plank_start": {"ar": "تم رصد البلانك! بدأ احتساب الثواني، اثبت!", "en": "Plank detected! Timer started. Keep holding."},
-    "plank_pause": {"ar": "انتبه! توقف المؤقت، اضبط استقامة الظهر لاستئناف العد.", "en": "Posture lost! Timer paused. Straighten your body to resume."},
-    "plank_10": {"ar": "ثبات ممتاز! 10 ثوانٍ مكتملة.", "en": "Great hold! 10 seconds completed."},
-    "plank_20": {"ar": "20 ثانية، واصل الثبات!", "en": "20 seconds, stay steady!"},
-    "plank_30": {"ar": "30 ثانية، مجهود بطولي!", "en": "30 seconds, heroic effort!"},
-    "plank_45": {"ar": "45 ثانية، اقتربت من الهدف!", "en": "45 seconds, almost there!"},
-    "plank_60": {"ar": "دقيقة كاملة! أداء أسطوري!", "en": "One full minute! Incredible hold!"},
+    "plank_start": {"ar": "وضعية ممتازة! بدأ عد الثواني، اثبت يا بطل!", "en": "Locked in! Plank timer started, stay solid!"},
+    "plank_pause": {"ar": "انتبه! الضهر رخي والعداد وقف، شد بطنك وافرد جسمك لاستئناف الثبات!", "en": "Posture lost! Timer paused, tighten your core and straighten up!"},
+    "plank_10": {"ar": "عشر ثواني ممتازة، ثبات حديد!", "en": "Ten seconds down, rock solid!"},
+    "plank_20": {"ar": "عشرين ثانية، عاش يا بطل!", "en": "Twenty seconds, holding strong!"},
+    "plank_30": {"ar": "تلاتين ثانية! نص دقيقة عظمة، كمل!", "en": "Thirty seconds! Half a minute down, keep holding!"},
+    "plank_45": {"ar": "خمسة وأربعين ثانية، قرّبت من الدقيقة!", "en": "Forty five seconds, almost at the minute mark!"},
+    "plank_60": {"ar": "دقيقة كاملة! بطل أسطوري، عاش!", "en": "Full minute! Outstanding champion hold!"},
 
     # Session completion
     "session_done_reps": {
-        "ar": "انتهت الجلسة بنجاح! أنجزت {total} تكراراً، مجهود رائع اليوم!",
-        "en": "Workout session completed! You finished a total of {total} reps. Excellent effort!"
+        "ar": "عاش يا وحش! انتهت الجلسة، أنجزت {total} تكرار بأداء قوي!",
+        "en": "Session complete! You crushed a total of {total} reps. Great workout!"
     },
     "session_done_plank": {
-        "ar": "انتهت الجلسة بنجاح! حققت ثباتاً لمدة {total} ثانية، مجهود رائع!",
-        "en": "Workout session completed! You held the plank for {total} seconds. Excellent effort!"
+        "ar": "عاش يا بطل! انتهت الجلسة بثبات لمدة {total} ثانية، مجهود محترفين!",
+        "en": "Session complete! You held that plank for {total} seconds. Powerful hold!"
     }
 }
 
 COACH_TIPS_I18N = {
     # Bicep Curl
     "curl_higher": {
-        "ar": "ارفع يدك للأعلى أكثر لانقباض كامل لعضلة الباي.",
-        "en": "Curl higher! Bring your hand closer to your shoulder to fully contract the bicep."
+        "ar": "ارفع يدك للأعلى أكتر واقفل عضلة الباي بالكامل!",
+        "en": "Curl higher! Squeeze that bicep all the way at the top!"
     },
     "extend": {
-        "ar": "افرد ذراعك للأسفل بالكامل لتمديد العضلة.",
-        "en": "Lower the weight all the way down for a full stretch in your arm."
+        "ar": "افرد دراعك للآخر يا كابتن، محتاجين مدى حركي كامل.",
+        "en": "Lower all the way down! Get that full arm extension."
     },
     "lean": {
-        "ar": "قف مستقيماً وشد عضلات البطن، لا تمل للخلف.",
-        "en": "Stand up straight and engage your core. Don't lean back."
+        "ar": "افرد ضهرك وشد بطنك، ما ترجعش بجسمك لورا!",
+        "en": "Stand tall and brace your core, don't lean back!"
     },
     "elbow_swing": {
-        "ar": "ثبت كوعك بجانب خصرك وتجنب أرجحة الذراع.",
-        "en": "Keep your upper arm still. Don't swing."
+        "ar": "ثبّت كوعك جنب ضلوعك، بلاش مرجحة في الدراع!",
+        "en": "Pin your elbow to your side, stop swinging the arm!"
     },
     "swing": {
-        "ar": "ثبت كوعك بجانب خصرك وتجنب أرجحة الذراع.",
-        "en": "Keep your upper arm still. Don't swing."
+        "ar": "ثبّت كوعك جنب ضلوعك، بلاش مرجحة في الدراع!",
+        "en": "Pin your elbow to your side, stop swinging the arm!"
     },
     "elbow_pin": {
         "ar": "ثبت كوعك بمحاذاة أضلاعك ولا تدعه يتحرك.",
         "en": "Pin your elbow to your ribs and keep it stable."
     },
     "momentum": {
-        "ar": "تحكم بالوزن وتجنب استخدام قوة الاندفاع.",
-        "en": "You are using momentum. Slow down and control the movement."
+        "ar": "تحكم بالوزن وتجنب استخدام قوة الاندفاع، بالراحة.",
+        "en": "Control the weight! Slow down and stop using momentum."
     },
 
     # Squat
     "depth": {
-        "ar": "انزل أكثر! اجعل الفخذين موازيين للأرض.",
-        "en": "Go a little deeper! Try to bring your thighs parallel to the ground."
+        "ar": "انزل لتحت أكتر يا كابتن! خلّي فخذيك يوازوا الأرض.",
+        "en": "Go deeper! Get those thighs parallel to the floor."
     },
     "chest_up": {
-        "ar": "ارفع صدرك للأعلى وتجنب الميل للأمام.",
-        "en": "Keep your chest up. Avoid leaning too far forward."
+        "ar": "ارفع صدرك لفوق، وافرد ضهرك ما تميلش لقدام!",
+        "en": "Chest up, keep your back flat! Don't fold forward."
     },
     "knee_travel": {
-        "ar": "وزع وزنك على الكعبين، لا تدفع ركبتك للأمام.",
-        "en": "Keep your weight on your heels. Don't let your knees travel too far forward."
+        "ar": "حمّل وزنك على كعوب رجليك، ركبتك ما تعديش صوابعك!",
+        "en": "Drive through your heels, don't let knees shoot past toes!"
     },
     "stand_full": {
-        "ar": "اصعد وافرد ركبتيك بالكامل عند نهاية العدة.",
-        "en": "Stand up completely and squeeze your glutes at the top."
+        "ar": "اطلع وافرد ركبتك للآخر واقفل الحركة فوق.",
+        "en": "Stand up tall and lock it out at the top!"
     },
 
     # Shoulder Press
     "shoulder_press_elbow": {
-        "ar": "أنزل أوزانك لمستوى الأذنين بزاوية 90 درجة.",
-        "en": "Do not drop your elbows too low. Keep them at 90 degrees."
+        "ar": "نزّل أوزانك لمستوى ودانك واثبت بزاوية قايمة.",
+        "en": "Lower to ear level, keep elbows at ninety degrees."
     },
     "elbow_drop": {
-        "ar": "أنزل أوزانك لمستوى الأذنين بزاوية 90 درجة.",
-        "en": "Do not drop your elbows too low. Keep them at 90 degrees."
+        "ar": "نزّل أوزانك لمستوى ودانك واثبت بزاوية قايمة.",
+        "en": "Lower to ear level, keep elbows at ninety degrees."
     },
     "shoulder_press_up": {
-        "ar": "ادفع الأوزان لأعلى وافرد ذراعيك فوق رأسك.",
-        "en": "Press all the way up! Extend your arms overhead."
+        "ar": "ادفع لفوق بقوة وافرد دراعاتك فوق راسك!",
+        "en": "Drive it up! Lock out overhead with control."
     },
     "press_up": {
-        "ar": "ادفع الأوزان لأعلى وافرد ذراعيك فوق رأسك.",
-        "en": "Press all the way up! Extend your arms overhead."
+        "ar": "ادفع لفوق بقوة وافرد دراعاتك فوق راسك!",
+        "en": "Drive it up! Lock out overhead with control."
     },
     "shoulder_press_sym": {
-        "ar": "حافظ على تماثل حركة الذراعين وارفعهما معاً.",
-        "en": "Keep your arms symmetrical. Press both weights together."
+        "ar": "ادفع الدراعين مع بعض بنفس القوة والسرعة!",
+        "en": "Press both arms together, keep the motion symmetrical!"
     },
     "asymmetry": {
-        "ar": "حافظ على تماثل حركة الذراعين وارفعهما معاً.",
-        "en": "Keep your arms symmetrical. Press both weights together."
+        "ar": "ادفع الدراعين مع بعض بنفس القوة والسرعة!",
+        "en": "Press both arms together, keep the motion symmetrical!"
     },
 
     # Plank
     "hip_sag": {
-        "ar": "ارفع حوضك قليلاً، لا تدع أسفل ظهرك يرتخي.",
-        "en": "Lift your hips slightly! Don't let your lower back sag."
+        "ar": "ارفع حوضك لفوق شوية، ما تسيبش أسفل ضهرك يرخي!",
+        "en": "Lift your hips up, don't let your lower back sag!"
     },
     "hip_pike": {
-        "ar": "أنزل حوضك، اجعل جسمك مستقيماً تماماً.",
-        "en": "Lower your hips! Keep your body in a straight line."
+        "ar": "نزّل حوضك شوية، خلّي جسمك مسطرة واحدة!",
+        "en": "Lower your hips, keep your body in a straight line!"
     },
     "hip_arch": {
-        "ar": "حافظ على استقامة الظهر وعضلات البطن مشدودة.",
-        "en": "Straighten your core. Don't arch your back."
+        "ar": "افرد جسمك وشد عضلات بطنك كويس!",
+        "en": "Brace your core, maintain a solid neutral spine!"
     },
     "knee_bend": {
-        "ar": "افرد ركبتيك وشد عضلات الفخذ.",
-        "en": "Keep your knees straight and engage your thighs."
+        "ar": "افرد ركبتك وشد عضلات رجلك كويس!",
+        "en": "Lock your knees and squeeze your quads!"
     },
     "plank_posture": {
         "ar": "اتخذ وضعية البلانك الأفقية على الأرض.",
@@ -240,34 +240,34 @@ COACH_TIPS_I18N = {
 
     # Lunge
     "knee_forward": {
-        "ar": "لا تدفع ركبتك الأمامية بعيداً، حافظ عليها فوق الكاحل.",
-        "en": "Do not push your front knee too far forward. Keep it above your ankle."
+        "ar": "ما ترميش ركبتك لقدام، خلّيها فوق كعب رجلك.",
+        "en": "Don't push your knee past your ankle! Keep it stacked."
     },
     "lunge_depth": {
-        "ar": "انزل بركبتك الخلفية أكثر نحو الأرض.",
-        "en": "Step deeper into the lunge. Lower your back knee."
+        "ar": "انزل بركبتك اللي ورا أكتر ناحية الأرض.",
+        "en": "Drop that back knee lower, hit proper depth!"
     },
 
     # Push-up
     "pushup_depth": {
-        "ar": "انزل بصدرك أكثر نحو الأرض لمدى حركي كامل.",
-        "en": "Go lower! Try to bring your chest closer to the floor."
+        "ar": "انزل بصدرك قريب من الأرض، وافرد كوعك للآخر في الطلوع!",
+        "en": "Chest to the floor! Get full depth on that press."
     },
 
     # Superman
     "lift": {
-        "ar": "ارفع صدرك وفخذيك أعلى عن الأرض.",
-        "en": "Lift your chest and thighs higher off the ground."
+        "ar": "ارفع صدرك ورجليك أعلى عن الأرض واقفل ضهرك!",
+        "en": "Lift your chest and thighs higher, squeeze the posterior chain!"
     },
 
     # Dips
     "dips_depth": {
-        "ar": "انزل أكثر واثنِ كوعيك بزاوية 90 درجة.",
-        "en": "Dip lower! Try to flex your elbows to 90 degrees."
+        "ar": "انزل لتحت واثنِ كوعك لتسعين درجة كاملة.",
+        "en": "Dip all the way down, bend your elbows to ninety degrees!"
     },
     "bench_dist": {
-        "ar": "حافظ على ظهرك قريباً من المقعد أو الكرسي.",
-        "en": "Keep your back close to the bench or chair."
+        "ar": "خلّي ضهرك قريب من الدكة عشان تحمي كتفك.",
+        "en": "Keep your back close to the bench to protect your shoulders."
     },
 
     # Orientation
@@ -322,6 +322,7 @@ class AudioFeedback:
         if lang in ("ar", "en"):
             self.lang = lang
             self.stop()
+            self.resume()
             with self._lock:
                 try:
                     if self._engine:
@@ -366,6 +367,11 @@ class AudioFeedback:
     def stop(self) -> None:
         """Stop any current speech and clear queue immediately."""
         self._stopped = True
+        try:
+            import sounddevice as sd
+            sd.stop()
+        except Exception:
+            pass
         if not self._enabled:
             return
         while not self._queue.empty():
@@ -384,25 +390,50 @@ class AudioFeedback:
         self.stop()
         self._queue.put(None)
 
+    def _play_neural_male_audio(self, text: str) -> bool:
+        """Play ultra-realistic neural male voice via sounddevice."""
+        try:
+            import sounddevice as sd
+            import soundfile as sf
+            from app.tts_helper import get_cache_path, synthesize_speech_async
+            import asyncio
+
+            cache_file = get_cache_path(text, self.lang)
+            if not os.path.exists(cache_file):
+                asyncio.run(synthesize_speech_async(text, self.lang))
+
+            if os.path.exists(cache_file):
+                data, fs = sf.read(cache_file)
+                sd.play(data, fs)
+                while sd.get_stream().active:
+                    if self._stopped:
+                        sd.stop()
+                        break
+                    time.sleep(0.04)
+                return True
+        except Exception as e:
+            logger.debug("Neural audio playback fallback: %s", e)
+        return False
+
     def _create_engine(self):
         try:
             eng = pyttsx3.init()
-            eng.setProperty("rate", 165)
+            eng.setProperty("rate", 155)
+            eng.setProperty("volume", 1.0)
             voices = eng.getProperty("voices")
             
-            # Select language voice if available
             chosen = None
-            if self.lang == "ar":
-                for v in voices:
-                    v_name = v.name.lower()
-                    if "arabic" in v_name or "hoda" in v_name or "naayf" in v_name or "maged" in v_name or "tarik" in v_name:
-                        chosen = v.id
-                        break
-            if not chosen:
-                for v in voices:
-                    if "zira" in v.name.lower() or "female" in v.name.lower() or "david" in v.name.lower():
-                        chosen = v.id
-                        break
+            # Strictly prioritize MALE voices (David, Mark, George, Guy) over female voices (Zira, Hazel)
+            male_keywords = ("david", "mark", "george", "guy", "male", "richard", "paul", "naayf", "maged", "tarik")
+            for v in voices:
+                v_name = v.name.lower()
+                if any(m in v_name for m in male_keywords) and not any(f in v_name for f in ("female", "zira", "hazel", "hoda")):
+                    chosen = v.id
+                    break
+
+            if not chosen and voices:
+                chosen = voices[0].id
+
             if chosen:
                 eng.setProperty("voice", chosen)
             return eng
@@ -410,20 +441,16 @@ class AudioFeedback:
             return None
 
     def _worker(self):
-        if _HAS_TTS:
-            try:
-                import pythoncom
-                pythoncom.CoInitialize()
-            except Exception:
-                pass
+        try:
+            pythoncom.CoInitialize()
+        except Exception:
+            pass
 
-            with self._lock:
+        with self._lock:
+            if self.lang != "ar":
                 self._engine = self._create_engine()
 
-            if self._engine is None:
-                self._worker_beep()
-                return
-
+        try:
             while True:
                 try:
                     text = self._queue.get(timeout=0.2)
@@ -432,31 +459,26 @@ class AudioFeedback:
                     if self._stopped:
                         continue
                     
-                    try:
-                        self._engine.say(text)
-                        self._engine.runAndWait()
-                    except Exception:
-                        pass
+                    # 1. Primary: High-fidelity Neural Male Coach (Shakir for Arabic, Christopher for English)
+                    if self._play_neural_male_audio(text):
+                        continue
 
-                    # Cleanly refresh engine instance after utterance so SAPI5 is never broken
-                    with self._lock:
+                    # 2. Secondary fallback: pyttsx3 with male David (ONLY for English, NEVER Arabic!)
+                    if self.lang != "ar" and _HAS_TTS and self._engine is not None:
                         try:
-                            del self._engine
+                            self._engine.say(text)
+                            self._engine.runAndWait()
                         except Exception:
                             pass
-                        self._engine = self._create_engine()
-
                 except queue.Empty:
                     pass
                 except Exception:
                     pass
-
+        finally:
             try:
                 pythoncom.CoUninitialize()
             except Exception:
                 pass
-        else:
-            self._worker_beep()
 
     def _worker_beep(self):
         try:
@@ -1303,6 +1325,7 @@ class PoseAnalyzer:
         coach_interval = 15  # Check form every N frames
         last_coach_frame = 0
 
+        self.audio.resume()
         is_front = exercise_type in (ExerciseType.SHOULDER_PRESS,)
         if is_front:
             self.audio.say_phrase("welcome_front", cooldown=0)
