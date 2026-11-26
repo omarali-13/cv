@@ -16,11 +16,13 @@ def get_exercise_reference(exercise_type: ExerciseType) -> np.ndarray:
     ref_filename = f"{exercise_type.value}_reference.npy"
     ref_path = os.path.join(REFERENCES_DIR, ref_filename)
     
+    synth = generate_synthetic_reference(exercise_type)
+    expected_dim = synth.shape[1]
+
     if os.path.exists(ref_path):
         try:
             ref_seq = np.load(ref_path)
             # Validate shape dimensions
-            expected_dim = 2 if exercise_type in (ExerciseType.BICEP_CURL, ExerciseType.SUPERMAN, ExerciseType.SHOULDER_PRESS) else 3
             if len(ref_seq.shape) == 2 and ref_seq.shape[1] == expected_dim:
                 return ref_seq
             else:
@@ -29,7 +31,7 @@ def get_exercise_reference(exercise_type: ExerciseType) -> np.ndarray:
             print(f"[ERROR] Failed to load reference {ref_filename}: {e}. Generating synthetic fallback.")
             
     # Synthetic fallback
-    return generate_synthetic_reference(exercise_type)
+    return synth
 
 def save_exercise_reference(exercise_type: ExerciseType, sequence: np.ndarray) -> bool:
     """Save reference array to references folder."""

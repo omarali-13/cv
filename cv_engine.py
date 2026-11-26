@@ -142,7 +142,7 @@ VOICE_PHRASES = {
 }
 
 COACH_TIPS_I18N = {
-    # Bicep Curl
+    # Bicep Curl & Hammer Curl
     "curl_higher": {
         "ar": "ارفع يدك للأعلى أكتر واقفل عضلة الباي بالكامل!",
         "en": "Curl higher! Squeeze that bicep all the way at the top!"
@@ -171,11 +171,43 @@ COACH_TIPS_I18N = {
         "ar": "تحكم بالوزن وتجنب استخدام قوة الاندفاع، بالراحة.",
         "en": "Control the weight! Slow down and stop using momentum."
     },
+    "neutral_grip": {
+        "ar": "حافظ على قبضة المطرقة عمودية وثبت كوعك جانب أضلاعك.",
+        "en": "Keep a vertical neutral grip and pin your elbows to your sides."
+    },
+    "hammer_higher": {
+        "ar": "ارفع الوزن للأعلى واعتصر عضلة الساعد والبايسبس!",
+        "en": "Curl higher! Squeeze brachialis and forearm at the peak."
+    },
 
-    # Squat
+    # Squat & Wall Sit
     "depth": {
         "ar": "انزل لتحت أكتر يا كابتن! خلّي فخذيك يوازوا الأرض.",
         "en": "Go deeper! Get those thighs parallel to the floor."
+    },
+    "chest_up": {
+        "ar": "ارفع صدرك للأمام وعينك مستقيمة، ما تنحنيش بضهرك!",
+        "en": "Chest up! Keep your spine tall, don't collapse forward."
+    },
+    "knee_travel": {
+        "ar": "ركبتك بتعدي مشط رجلك بكتير، ارجع بحوضك لورا كأنك بتقعد على كرسي.",
+        "en": "Knees traveling too far forward, sit back on your heels."
+    },
+    "stand_full": {
+        "ar": "اقف وافرد ركبتك واعتصر عضلات الفخذ والمؤخرة في الصعود.",
+        "en": "Stand up completely and lock out hips and glutes at the top."
+    },
+    "wall_sit_depth": {
+        "ar": "انزل بحوضك لزاوية تسعين درجة لتوازي فخذيك الأرض تماماً.",
+        "en": "Lower hips to 90 degrees until thighs are parallel to the floor."
+    },
+    "wall_sit_back": {
+        "ar": "ثبت ظهرك بالكامل مستقيماً على الحائط مع شد عضلات البطن.",
+        "en": "Keep your back firmly flat against the wall, brace your core."
+    },
+    "wall_sit_knees": {
+        "ar": "حافظ على اتساع الركبتين بمحاذاة الكتفين ولا تضمهما للداخل.",
+        "en": "Keep knees stacked over ankles, don't let knees cave in."
     },
     "chest_up": {
         "ar": "ارفع صدرك لفوق، وافرد ضهرك ما تميلش لقدام!",
@@ -238,7 +270,7 @@ COACH_TIPS_I18N = {
         "en": "Get into a horizontal plank position on the floor."
     },
 
-    # Lunge
+    # Lunge & Glute Bridge
     "knee_forward": {
         "ar": "ما ترميش ركبتك لقدام، خلّيها فوق كعب رجلك.",
         "en": "Don't push your knee past your ankle! Keep it stacked."
@@ -247,20 +279,70 @@ COACH_TIPS_I18N = {
         "ar": "انزل بركبتك اللي ورا أكتر ناحية الأرض.",
         "en": "Drop that back knee lower, hit proper depth!"
     },
+    "bridge_height": {
+        "ar": "ادفع حوضك للأعلى بقوة حتى يستقيم جذعك مع فخذيك!",
+        "en": "Drive hips up high! Align torso with thighs in a straight line."
+    },
+    "glute_squeeze": {
+        "ar": "اعتصر عضلات المؤخرة لثانية كاملة في أعلى نقطة.",
+        "en": "Squeeze your glutes tightly for a second at the peak of the bridge."
+    },
+    "bridge_overarch": {
+        "ar": "لا تقوس أسفل ضهرك بشكل مفرط، اعتمد على دفع الكعبين.",
+        "en": "Avoid hyperextending your lower back, drive through your heels."
+    },
 
-    # Push-up
+    # Push-up & Chest Fly
     "pushup_depth": {
         "ar": "انزل بصدرك قريب من الأرض، وافرد كوعك للآخر في الطلوع!",
         "en": "Chest to the floor! Get full depth on that press."
     },
+    "fly_squeeze": {
+        "ar": "ضم ذراعيك للأمام واعتصر عضلات الصدر بقوة!",
+        "en": "Bring arms together in front and squeeze your chest hard!"
+    },
+    "fly_stretch": {
+        "ar": "افتح ذراعيك بحذر للجانبين مع انحناء خفيف في الكوع.",
+        "en": "Open arms wide with a slight elbow bend, feel the chest stretch."
+    },
+    "fly_elbow_bend": {
+        "ar": "لا تفرد كوعك بالكامل ولا تثنه بشدة، حافظ على زاوية ثابتة.",
+        "en": "Maintain a soft, fixed elbow bend throughout the fly."
+    },
 
-    # Superman
+    # Superman & Bent-Over Row
     "lift": {
         "ar": "ارفع صدرك ورجليك أعلى عن الأرض واقفل ضهرك!",
         "en": "Lift your chest and thighs higher, squeeze the posterior chain!"
     },
+    "row_pull": {
+        "ar": "اسحب كوعك للخلف واعتصر عضلات أعلى الظهر واللوحين!",
+        "en": "Pull elbows back high and squeeze your shoulder blades together!"
+    },
+    "row_back_straight": {
+        "ar": "حافظ على استقامة الظهر وانحناء الجذع، تجنب تقوس العمود الفقري.",
+        "en": "Keep your spine flat and neutral, do not round your back!"
+    },
+    "row_extend": {
+        "ar": "انزل بالوزن للأسفل مع التحكم في الهبوط لمدى حركي كامل.",
+        "en": "Lower the weight with control for a complete stretch."
+    },
 
-    # Dips
+    # Lateral Raise & Shoulder Press
+    "lateral_height": {
+        "ar": "ارفع ذراعيك لمستوى الكتف فقط، لا تتجاوز مستوى التوازي.",
+        "en": "Raise arms to shoulder height only, do not go above parallel."
+    },
+    "lateral_momentum": {
+        "ar": "تجنب مرجحة الجذع واستخدام الاندفاع، ارفع بالتحكم العضلي.",
+        "en": "Stop using body momentum, control the lift with your side delts."
+    },
+    "lateral_elbow": {
+        "ar": "قد الحركة بكوعك للأعلى مع انحناء خفيف جداً في الذراع.",
+        "en": "Lead with your elbows, keeping a slight comfortable bend."
+    },
+
+    # Dips & Overhead Tricep
     "dips_depth": {
         "ar": "انزل لتحت واثنِ كوعك لتسعين درجة كاملة.",
         "en": "Dip all the way down, bend your elbows to ninety degrees!"
@@ -268,6 +350,32 @@ COACH_TIPS_I18N = {
     "bench_dist": {
         "ar": "خلّي ضهرك قريب من الدكة عشان تحمي كتفك.",
         "en": "Keep your back close to the bench to protect your shoulders."
+    },
+    "tricep_lockout": {
+        "ar": "افرد ذراعيك للأعلى واعتصر عضلة الترايسبس بالكامل!",
+        "en": "Extend arms fully overhead and squeeze your triceps!"
+    },
+    "tricep_elbow_flare": {
+        "ar": "ضم كوعيك للداخل بالقرب من رأسك، بلاش فتح الكوع للخارج.",
+        "en": "Keep elbows tucked close to your head, avoid flaring out."
+    },
+    "tricep_depth": {
+        "ar": "انزل بالوزن خلف رأسك لزاوية تسعين درجة لمدى حركي كامل.",
+        "en": "Lower weight behind head to 90 degrees for a full stretch."
+    },
+
+    # Core: Leg Raise
+    "leg_raise_up": {
+        "ar": "ارفع ساقيك للأعلى بزاوية تسعين درجة مع شد البطن السفلية!",
+        "en": "Raise legs up to 90 degrees, contract your lower abs!"
+    },
+    "leg_raise_down": {
+        "ar": "انزل بساقيك ببطء دون لمس الأرض ودون تقويس أسفل ظهرك.",
+        "en": "Lower legs slowly without touching the floor or arching lower back."
+    },
+    "leg_raise_knees": {
+        "ar": "حافظ على استقامة ساقيك قدر الإمكان أثناء الصعود والهبوط.",
+        "en": "Keep legs as straight as possible throughout the movement."
     },
 
     # Orientation
@@ -500,13 +608,21 @@ class AudioFeedback:
 # ===================================================================
 class ExerciseType(Enum):
     BICEP_CURL = "bicep_curl"
+    HAMMER_CURL = "hammer_curl"
     SQUAT = "squat"
+    WALL_SIT = "wall_sit"
     LUNGE = "lunge"
+    GLUTE_BRIDGE = "glute_bridge"
     PUSH_UP = "push_up"
+    CHEST_FLY = "chest_fly"
     SUPERMAN = "superman"
+    BENT_OVER_ROW = "bent_over_row"
     SHOULDER_PRESS = "shoulder_press"
+    LATERAL_RAISE = "lateral_raise"
     DIPS = "dips"
+    OVERHEAD_TRICEP = "overhead_tricep"
     PLANK = "plank"
+    LEG_RAISE = "leg_raise"
 
 
 @dataclass
@@ -527,8 +643,8 @@ class RepetitionState:
     min_angle: float = 180.0
     max_angle: float = 0.0
     shoulder_angles: list = field(default_factory=list)  # Track shoulder stability
-    hold_seconds: float = 0.0                            # For Plank: seconds held with verified form
-    is_holding: bool = False                             # For Plank: currently in correct posture
+    hold_seconds: float = 0.0                            # For Plank/Wall Sit: seconds held with verified form
+    is_holding: bool = False                             # For Plank/Wall Sit: currently in correct posture
     progress_pct: float = 0.0                            # 0 to 100% progress for current rep / hold
 
 
@@ -552,7 +668,29 @@ class PoseAnalyzer:
                 "shoulder": (LM["R_HIP"],      LM["R_SHOULDER"], LM["R_ELBOW"]),
             },
         },
+        ExerciseType.HAMMER_CURL: {
+            "left": {
+                "elbow":    (LM["L_SHOULDER"], LM["L_ELBOW"], LM["L_WRIST"]),
+                "shoulder": (LM["L_HIP"],      LM["L_SHOULDER"], LM["L_ELBOW"]),
+            },
+            "right": {
+                "elbow":    (LM["R_SHOULDER"], LM["R_ELBOW"], LM["R_WRIST"]),
+                "shoulder": (LM["R_HIP"],      LM["R_SHOULDER"], LM["R_ELBOW"]),
+            },
+        },
         ExerciseType.SQUAT: {
+            "left": {
+                "hip":   (LM["L_SHOULDER"], LM["L_HIP"],  LM["L_KNEE"]),
+                "knee":  (LM["L_HIP"],      LM["L_KNEE"], LM["L_ANKLE"]),
+                "ankle": (LM["L_KNEE"],     LM["L_ANKLE"], LM["L_FOOT"]),
+            },
+            "right": {
+                "hip":   (LM["R_SHOULDER"], LM["R_HIP"],  LM["R_KNEE"]),
+                "knee":  (LM["R_HIP"],      LM["R_KNEE"], LM["R_ANKLE"]),
+                "ankle": (LM["R_KNEE"],     LM["R_ANKLE"], LM["R_FOOT"]),
+            },
+        },
+        ExerciseType.WALL_SIT: {
             "left": {
                 "hip":   (LM["L_SHOULDER"], LM["L_HIP"],  LM["L_KNEE"]),
                 "knee":  (LM["L_HIP"],      LM["L_KNEE"], LM["L_ANKLE"]),
@@ -576,6 +714,16 @@ class PoseAnalyzer:
                 "ankle": (LM["R_KNEE"],     LM["R_ANKLE"], LM["R_FOOT"]),
             },
         },
+        ExerciseType.GLUTE_BRIDGE: {
+            "left": {
+                "hip":   (LM["L_SHOULDER"], LM["L_HIP"],  LM["L_KNEE"]),
+                "knee":  (LM["L_HIP"],      LM["L_KNEE"], LM["L_ANKLE"]),
+            },
+            "right": {
+                "hip":   (LM["R_SHOULDER"], LM["R_HIP"],  LM["R_KNEE"]),
+                "knee":  (LM["R_HIP"],      LM["R_KNEE"], LM["R_ANKLE"]),
+            },
+        },
         ExerciseType.PUSH_UP: {
             "left": {
                 "elbow":    (LM["L_SHOULDER"], LM["L_ELBOW"], LM["L_WRIST"]),
@@ -588,6 +736,16 @@ class PoseAnalyzer:
                 "hip":      (LM["R_SHOULDER"], LM["R_HIP"],  LM["R_KNEE"]),
             },
         },
+        ExerciseType.CHEST_FLY: {
+            "left": {
+                "shoulder": (LM["L_HIP"],      LM["L_SHOULDER"], LM["L_ELBOW"]),
+                "elbow":    (LM["L_SHOULDER"], LM["L_ELBOW"],    LM["L_WRIST"]),
+            },
+            "right": {
+                "shoulder": (LM["R_HIP"],      LM["R_SHOULDER"], LM["R_ELBOW"]),
+                "elbow":    (LM["R_SHOULDER"], LM["R_ELBOW"],    LM["R_WRIST"]),
+            },
+        },
         ExerciseType.SUPERMAN: {
             "left": {
                 "hip":      (LM["L_SHOULDER"], LM["L_HIP"],  LM["L_KNEE"]),
@@ -596,6 +754,18 @@ class PoseAnalyzer:
             "right": {
                 "hip":      (LM["R_SHOULDER"], LM["R_HIP"],  LM["R_KNEE"]),
                 "shoulder": (LM["R_ELBOW"],    LM["R_SHOULDER"], LM["R_HIP"]),
+            },
+        },
+        ExerciseType.BENT_OVER_ROW: {
+            "left": {
+                "elbow":    (LM["L_SHOULDER"], LM["L_ELBOW"], LM["L_WRIST"]),
+                "shoulder": (LM["L_HIP"],      LM["L_SHOULDER"], LM["L_ELBOW"]),
+                "hip":      (LM["L_SHOULDER"], LM["L_HIP"],  LM["L_KNEE"]),
+            },
+            "right": {
+                "elbow":    (LM["R_SHOULDER"], LM["R_ELBOW"], LM["R_WRIST"]),
+                "shoulder": (LM["R_HIP"],      LM["R_SHOULDER"], LM["R_ELBOW"]),
+                "hip":      (LM["R_SHOULDER"], LM["R_HIP"],  LM["R_KNEE"]),
             },
         },
         ExerciseType.SHOULDER_PRESS: {
@@ -608,6 +778,16 @@ class PoseAnalyzer:
                 "shoulder": (LM["R_HIP"],      LM["R_SHOULDER"], LM["R_ELBOW"]),
             },
         },
+        ExerciseType.LATERAL_RAISE: {
+            "left": {
+                "shoulder": (LM["L_HIP"],      LM["L_SHOULDER"], LM["L_ELBOW"]),
+                "elbow":    (LM["L_SHOULDER"], LM["L_ELBOW"],    LM["L_WRIST"]),
+            },
+            "right": {
+                "shoulder": (LM["R_HIP"],      LM["R_SHOULDER"], LM["R_ELBOW"]),
+                "elbow":    (LM["R_SHOULDER"], LM["R_ELBOW"],    LM["R_WRIST"]),
+            },
+        },
         ExerciseType.DIPS: {
             "left": {
                 "elbow":    (LM["L_SHOULDER"], LM["L_ELBOW"], LM["L_WRIST"]),
@@ -618,6 +798,16 @@ class PoseAnalyzer:
                 "elbow":    (LM["R_SHOULDER"], LM["R_ELBOW"], LM["R_WRIST"]),
                 "shoulder": (LM["R_HIP"],      LM["R_SHOULDER"], LM["R_ELBOW"]),
                 "hip":      (LM["R_SHOULDER"], LM["R_HIP"],  LM["R_KNEE"]),
+            },
+        },
+        ExerciseType.OVERHEAD_TRICEP: {
+            "left": {
+                "elbow":    (LM["L_SHOULDER"], LM["L_ELBOW"], LM["L_WRIST"]),
+                "shoulder": (LM["L_HIP"],      LM["L_SHOULDER"], LM["L_ELBOW"]),
+            },
+            "right": {
+                "elbow":    (LM["R_SHOULDER"], LM["R_ELBOW"], LM["R_WRIST"]),
+                "shoulder": (LM["R_HIP"],      LM["R_SHOULDER"], LM["R_ELBOW"]),
             },
         },
         ExerciseType.PLANK: {
@@ -632,6 +822,16 @@ class PoseAnalyzer:
                 "knee":     (LM["R_HIP"],      LM["R_KNEE"], LM["R_ANKLE"]),
             },
         },
+        ExerciseType.LEG_RAISE: {
+            "left": {
+                "hip":  (LM["L_SHOULDER"], LM["L_HIP"], LM["L_ANKLE"]),
+                "knee": (LM["L_HIP"],      LM["L_KNEE"], LM["L_ANKLE"]),
+            },
+            "right": {
+                "hip":  (LM["R_SHOULDER"], LM["R_HIP"], LM["R_ANKLE"]),
+                "knee": (LM["R_HIP"],      LM["R_KNEE"], LM["R_ANKLE"]),
+            },
+        },
     }
 
     _REP_CONFIG = {
@@ -640,40 +840,80 @@ class PoseAnalyzer:
             "start": 140,
             "bottom": 60,
         },
+        ExerciseType.HAMMER_CURL: {
+            "primary": "elbow",
+            "start": 140,
+            "bottom": 65,
+        },
         ExerciseType.SQUAT: {
             "primary": "knee",
             "start": 155,
             "bottom": 110,
+        },
+        ExerciseType.WALL_SIT: {
+            "primary": "knee",
+            "start": 140,
+            "bottom": 95,
         },
         ExerciseType.LUNGE: {
             "primary": "knee",
             "start": 155,
             "bottom": 110,
         },
+        ExerciseType.GLUTE_BRIDGE: {
+            "primary": "hip",
+            "start": 110,
+            "bottom": 165,
+        },
         ExerciseType.PUSH_UP: {
             "primary": "elbow",
             "start": 150,
             "bottom": 95,
+        },
+        ExerciseType.CHEST_FLY: {
+            "primary": "shoulder",
+            "start": 80,
+            "bottom": 35,
         },
         ExerciseType.SUPERMAN: {
             "primary": "hip",
             "start": 175,
             "bottom": 166,
         },
+        ExerciseType.BENT_OVER_ROW: {
+            "primary": "elbow",
+            "start": 150,
+            "bottom": 85,
+        },
         ExerciseType.SHOULDER_PRESS: {
             "primary": "elbow",
-            "start": 140,
-            "bottom": 100,
+            "start": 100,
+            "bottom": 160,
+        },
+        ExerciseType.LATERAL_RAISE: {
+            "primary": "shoulder",
+            "start": 30,
+            "bottom": 85,
         },
         ExerciseType.DIPS: {
             "primary": "elbow",
             "start": 150,
             "bottom": 95,
         },
+        ExerciseType.OVERHEAD_TRICEP: {
+            "primary": "elbow",
+            "start": 80,
+            "bottom": 150,
+        },
         ExerciseType.PLANK: {
             "primary": "hip",
             "start": 165,
             "bottom": 150,
+        },
+        ExerciseType.LEG_RAISE: {
+            "primary": "hip",
+            "start": 160,
+            "bottom": 100,
         },
     }
 
@@ -1149,27 +1389,160 @@ class PoseAnalyzer:
         rep_state.is_holding = not (is_sagging or is_piked or is_knee_bent)
         return tips
 
+    def coach_hammer_curl(
+        self, landmarks: list, angles: dict[str, float],
+        side: str, rep_state: RepetitionState,
+    ) -> list[tuple[str, str]]:
+        tips: list[tuple[str, str]] = []
+        elbow_angle = angles.get("elbow", 90)
+        shoulder_angle = angles.get("shoulder", 20)
+        if shoulder_angle > 40:
+            tips.append(("Keep your elbow pinned to your side, stop swinging.", "elbow_swing"))
+        if rep_state.phase == "ascending" and rep_state.min_angle > 80:
+            tips.append(("Curl higher! Squeeze brachialis and forearm at the peak.", "hammer_higher"))
+        if rep_state.phase == "idle" and rep_state.max_angle < 130 and rep_state.rep_count > 0:
+            tips.append(("Lower all the way down for full extension.", "extend"))
+        return tips
+
+    def coach_wall_sit(
+        self, landmarks: list, angles: dict[str, float],
+        side: str, rep_state: RepetitionState,
+    ) -> list[tuple[str, str]]:
+        tips: list[tuple[str, str]] = []
+        knee_angle = angles.get("knee", 90)
+        hip_angle = angles.get("hip", 90)
+
+        if side == "left":
+            sh = landmarks[LM["L_SHOULDER"]]
+            hp = landmarks[LM["L_HIP"]]
+        else:
+            sh = landmarks[LM["R_SHOULDER"]]
+            hp = landmarks[LM["R_HIP"]]
+
+        is_good = True
+        if knee_angle > 115:
+            tips.append(("Lower hips to 90 degrees until thighs are parallel to the floor.", "wall_sit_depth"))
+            is_good = False
+        elif knee_angle < 75:
+            tips.append(("Don't squat too deep, maintain a 90-degree knee bend.", "wall_sit_depth"))
+            is_good = False
+
+        torso_tilt = abs(sh.x - hp.x)
+        if torso_tilt > 0.12:
+            tips.append(("Keep your back firmly flat against the wall, brace your core.", "wall_sit_back"))
+            is_good = False
+
+        rep_state.is_holding = is_good
+        return tips
+
+    def coach_glute_bridge(
+        self, landmarks: list, angles: dict[str, float],
+        side: str, rep_state: RepetitionState,
+    ) -> list[tuple[str, str]]:
+        tips: list[tuple[str, str]] = []
+        hip_angle = angles.get("hip", 150)
+        if rep_state.phase in ("descending", "idle") and rep_state.max_angle < 155 and rep_state.rep_count > 0:
+            tips.append(("Drive hips up high! Align torso with thighs in a straight line.", "bridge_height"))
+        if hip_angle > 185:
+            tips.append(("Avoid hyperextending your lower back, drive through your heels.", "bridge_overarch"))
+        return tips
+
+    def coach_chest_fly(
+        self, landmarks: list, angles: dict[str, float],
+        side: str, rep_state: RepetitionState,
+    ) -> list[tuple[str, str]]:
+        tips: list[tuple[str, str]] = []
+        el_angle = angles.get("elbow", 150)
+        if el_angle < 125:
+            tips.append(("Maintain a soft, fixed elbow bend throughout the fly.", "fly_elbow_bend"))
+        if rep_state.phase == "ascending" and rep_state.min_angle > 50:
+            tips.append(("Bring arms together in front and squeeze your chest hard!", "fly_squeeze"))
+        return tips
+
+    def coach_bent_over_row(
+        self, landmarks: list, angles: dict[str, float],
+        side: str, rep_state: RepetitionState,
+    ) -> list[tuple[str, str]]:
+        tips: list[tuple[str, str]] = []
+        hip_angle = angles.get("hip", 110)
+        if hip_angle > 145 or hip_angle < 80:
+            tips.append(("Keep your spine flat and neutral, do not round your back!", "row_back_straight"))
+        if rep_state.phase == "ascending" and rep_state.min_angle > 105:
+            tips.append(("Pull elbows back high and squeeze your shoulder blades together!", "row_pull"))
+        return tips
+
+    def coach_lateral_raise(
+        self, landmarks: list, angles: dict[str, float],
+        side: str, rep_state: RepetitionState,
+    ) -> list[tuple[str, str]]:
+        tips: list[tuple[str, str]] = []
+        sh_angle = angles.get("shoulder", 40)
+        if sh_angle > 105:
+            tips.append(("Raise arms to shoulder height only, do not go above parallel.", "lateral_height"))
+        if rep_state.phase == "ascending" and rep_state.max_angle < 70:
+            tips.append(("Raise dumbbells up to shoulder level.", "lateral_height"))
+        return tips
+
+    def coach_overhead_tricep(
+        self, landmarks: list, angles: dict[str, float],
+        side: str, rep_state: RepetitionState,
+    ) -> list[tuple[str, str]]:
+        tips: list[tuple[str, str]] = []
+        sh_angle = angles.get("shoulder", 160)
+        if sh_angle < 135:
+            tips.append(("Keep elbows tucked close to your head, avoid flaring out.", "tricep_elbow_flare"))
+        if rep_state.phase in ("descending", "idle") and rep_state.max_angle < 140 and rep_state.rep_count > 0:
+            tips.append(("Extend arms fully overhead and squeeze your triceps!", "tricep_lockout"))
+        return tips
+
+    def coach_leg_raise(
+        self, landmarks: list, angles: dict[str, float],
+        side: str, rep_state: RepetitionState,
+    ) -> list[tuple[str, str]]:
+        tips: list[tuple[str, str]] = []
+        knee_angle = angles.get("knee", 170)
+        if knee_angle < 140:
+            tips.append(("Keep legs as straight as possible throughout the movement.", "leg_raise_knees"))
+        if rep_state.phase == "ascending" and rep_state.min_angle > 115:
+            tips.append(("Raise legs up to 90 degrees, contract your lower abs!", "leg_raise_up"))
+        return tips
+
     # ------------------------------------------------------------------
-    # DTW evaluation
+    # 5-STAGE FORM SCORING FROM MOTION SIMILARITY (FAST-DTW PIPELINE)
+    # Step 1: Capture (Reference motion and user motion)
+    # Step 2: Normalize Starting Point (u - u[0], r - r[0])
+    # Step 3: Align (DTW temporal alignment via FastDTW)
+    # Step 4: Compare (Normalized trajectory distance & ROM amplitude)
+    # Step 5: Output (Composite Form Score 0-100% & Feedback)
     # ------------------------------------------------------------------
     @staticmethod
     def evaluate_form(
         user_seq: np.ndarray, ref_seq: np.ndarray, threshold: float = 25.0, lang: str = "ar",
     ) -> FormEvaluation:
+        # Step 1: Capture validation
         user = np.atleast_2d(np.asarray(user_seq, dtype=np.float64))
         ref = np.atleast_2d(np.asarray(ref_seq, dtype=np.float64))
         if user.shape[0] < 2 or ref.shape[0] < 2:
             msg = "Not enough movement frames captured." if lang == "en" else "لم يتم التقاط كادرات كافية للحركة."
             return FormEvaluation(float("inf"), 0, False, threshold, msg)
 
-        # Baseline offset compensation:
+        # Ensure identical feature dimensionality between user and reference sequences
+        if user.shape[1] != ref.shape[1]:
+            min_dim = min(user.shape[1], ref.shape[1])
+            user = user[:, :min_dim]
+            ref = ref[:, :min_dim]
+
+        # Step 2: Normalize Starting Point (Baseline offset compensation)
         # Zero-reference joint trajectories relative to initial starting posture to eliminate
-        # natural anthropometric variations and monocular perspective offsets (e.g. resting shoulder angle or 2D ankle angle).
+        # natural anthropometric variations and monocular perspective offsets.
         u_rel = user - user[0]
         r_rel = ref - ref[0]
 
+        # Step 3: Align (FastDTW dynamic time warping)
         dist, path = fastdtw(u_rel, r_rel, dist=euclidean)
         path_len = max(len(path), 1)
+
+        # Step 4: Compare (Motion similarity computation)
         norm = dist / (path_len * np.sqrt(user.shape[1]))
 
         # Dynamic trajectory fidelity score:
@@ -1189,7 +1562,7 @@ class PoseAnalyzer:
         else:
             rom_factor = float(np.clip(u_amp / target_amp, 0.45, 1.0))
 
-        # Composite biomechanical score: 70% dynamic shape + 30% range of motion
+        # Step 5: Output (Composite biomechanical score: 70% dynamic shape + 30% range of motion)
         score = float(np.clip(shape_score * (0.70 + 0.30 * rom_factor), 10.0, 100.0))
         ok = score >= 60.0
 
@@ -1215,7 +1588,7 @@ class PoseAnalyzer:
         exercise_type: ExerciseType, dt_sec: float = 0.033,
     ) -> bool:
         """Returns True if a new rep was just completed."""
-        if exercise_type == ExerciseType.PLANK:
+        if exercise_type in (ExerciseType.PLANK, ExerciseType.WALL_SIT):
             if state.is_holding:
                 was_holding = (state.phase == "HOLDING")
                 state.phase = "HOLDING"
@@ -1243,43 +1616,79 @@ class PoseAnalyzer:
         bottom = config["bottom"]
         vec = list(angles.values())
         range_deg = abs(start - bottom) or 1.0
+        is_increasing = (bottom > start)
 
         state.max_angle = max(state.max_angle, angle)
+        state.min_angle = min(state.min_angle, angle)
 
-        # Smooth, continuous Range of Motion depth (0% at starting point, 100% at peak contraction/bottom depth)
-        target_rom = float(np.clip(((start - angle) / range_deg) * 100.0, 0.0, 100.0))
-        # Continuous exponential smoothing for fluid visual feedback without jerky 50% split halves
+        # Smooth, continuous Range of Motion depth
+        if not is_increasing:
+            target_rom = float(np.clip(((start - angle) / range_deg) * 100.0, 0.0, 100.0))
+        else:
+            target_rom = float(np.clip(((angle - start) / range_deg) * 100.0, 0.0, 100.0))
+            
         state.progress_pct = float(np.clip(0.60 * state.progress_pct + 0.40 * target_rom, 0.0, 100.0))
 
-        if state.phase == "idle":
-            if angle < start - 5:
-                state.phase = "descending"
-                state.angle_sequence = [vec]
-                state.min_angle = angle
-                state.max_angle = angle
-                state.shoulder_angles = []
+        if not is_increasing:
+            if state.phase == "idle":
+                if angle < start - 5:
+                    state.phase = "descending"
+                    state.angle_sequence = [vec]
+                    state.min_angle = angle
+                    state.max_angle = angle
+                    state.shoulder_angles = []
 
-        elif state.phase == "descending":
-            state.angle_sequence.append(vec)
-            state.min_angle = min(state.min_angle, angle)
-            if angle <= bottom:
-                state.phase = "ascending"
+            elif state.phase == "descending":
+                state.angle_sequence.append(vec)
+                state.min_angle = min(state.min_angle, angle)
+                if angle <= bottom:
+                    state.phase = "ascending"
 
-        elif state.phase == "ascending":
-            state.angle_sequence.append(vec)
-            if angle >= start - 4:
-                state.rep_count += 1
-                state.phase = "idle"
+            elif state.phase == "ascending":
+                state.angle_sequence.append(vec)
+                if angle >= start - 4:
+                    state.rep_count += 1
+                    state.phase = "idle"
 
-                if ref_seq is not None and len(state.angle_sequence) > 3:
-                    ev = self.evaluate_form(
-                        np.array(state.angle_sequence), ref_seq, self.dtw_threshold, lang=self.lang,
-                    )
-                    evals.append(ev)
+                    if ref_seq is not None and len(state.angle_sequence) > 3:
+                        ev = self.evaluate_form(
+                            np.array(state.angle_sequence), ref_seq, self.dtw_threshold, lang=self.lang,
+                        )
+                        evals.append(ev)
 
-                state.angle_sequence = []
-                state.shoulder_angles = []
-                return True
+                    state.angle_sequence = []
+                    state.shoulder_angles = []
+                    return True
+        else:
+            if state.phase == "idle":
+                if angle > start + 5:
+                    state.phase = "ascending"
+                    state.angle_sequence = [vec]
+                    state.min_angle = angle
+                    state.max_angle = angle
+                    state.shoulder_angles = []
+
+            elif state.phase == "ascending":
+                state.angle_sequence.append(vec)
+                state.max_angle = max(state.max_angle, angle)
+                if angle >= bottom:
+                    state.phase = "descending"
+
+            elif state.phase == "descending":
+                state.angle_sequence.append(vec)
+                if angle <= start + 4:
+                    state.rep_count += 1
+                    state.phase = "idle"
+
+                    if ref_seq is not None and len(state.angle_sequence) > 3:
+                        ev = self.evaluate_form(
+                            np.array(state.angle_sequence), ref_seq, self.dtw_threshold, lang=self.lang,
+                        )
+                        evals.append(ev)
+
+                    state.angle_sequence = []
+                    state.shoulder_angles = []
+                    return True
 
         state.prev_angle = angle
         return False
@@ -1326,7 +1735,7 @@ class PoseAnalyzer:
         last_coach_frame = 0
 
         self.audio.resume()
-        is_front = exercise_type in (ExerciseType.SHOULDER_PRESS,)
+        is_front = exercise_type in (ExerciseType.SHOULDER_PRESS, ExerciseType.LATERAL_RAISE, ExerciseType.CHEST_FLY)
         if is_front:
             self.audio.say_phrase("welcome_front", cooldown=0)
         else:
@@ -1348,20 +1757,20 @@ class PoseAnalyzer:
                 if lm is not None:
                     orientation = self.detect_orientation(lm)
 
-                    if exercise_type in (ExerciseType.SHOULDER_PRESS,):
+                    if exercise_type in (ExerciseType.SHOULDER_PRESS, ExerciseType.LATERAL_RAISE, ExerciseType.CHEST_FLY):
                         active_side = "both"
                         left_angles = self.extract_features(lm, exercise_type, "left")
                         right_angles = self.extract_features(lm, exercise_type, "right")
 
                         if left_angles is not None and right_angles is not None:
                             angles = {
-                                "elbow": (left_angles["elbow"] + right_angles["elbow"]) / 2.0,
-                                "shoulder": (left_angles["shoulder"] + right_angles["shoulder"]) / 2.0,
+                                k: (left_angles[k] + right_angles[k]) / 2.0
+                                for k in left_angles if k in right_angles
                             }
                         else:
                             angles = None
                     else:
-                        # Auto-detect active side for Bicep Curl and other side-view exercises
+                        # Auto-detect active side for side-view exercises
                         detected_side = self.detect_active_side(lm, exercise_type)
                         active_side = detected_side
                         angles = self.extract_features(lm, exercise_type, active_side)
@@ -1370,9 +1779,17 @@ class PoseAnalyzer:
                         primary = config["primary"]
                         p_angle = angles.get(primary, 180.0)
 
-                        # For Plank: evaluate posture on every frame so is_holding is real-time
+                        # For Plank & Wall Sit: evaluate posture on every frame so is_holding is real-time
                         if exercise_type == ExerciseType.PLANK:
                             tips = self.coach_plank(lm, angles, active_side, rep_state)
+                            if tips:
+                                tip_text = self.get_tip_text(tips[0])
+                                tip_display_text = tip_text
+                                self.audio.say(tip_text, cooldown=4.0, key=tips[0][1])
+                            else:
+                                tip_display_text = ""
+                        elif exercise_type == ExerciseType.WALL_SIT:
+                            tips = self.coach_wall_sit(lm, angles, active_side, rep_state)
                             if tips:
                                 tip_text = self.get_tip_text(tips[0])
                                 tip_display_text = tip_text
@@ -1407,25 +1824,41 @@ class PoseAnalyzer:
 
                             if exercise_type == ExerciseType.BICEP_CURL:
                                 tips = self.coach_bicep_curl(lm, angles, active_side, rep_state)
+                            elif exercise_type == ExerciseType.HAMMER_CURL:
+                                tips = self.coach_hammer_curl(lm, angles, active_side, rep_state)
                             elif exercise_type == ExerciseType.SQUAT:
                                 tips = self.coach_squat(lm, angles, active_side, rep_state)
-                            elif exercise_type == ExerciseType.SHOULDER_PRESS:
-                                tips = self.coach_shoulder_press(lm, angles, active_side, rep_state)
-                            elif exercise_type == ExerciseType.PUSH_UP:
-                                tips = self.coach_push_up(lm, angles, active_side, rep_state)
+                            elif exercise_type == ExerciseType.WALL_SIT:
+                                pass  # Continuous hold evaluation
                             elif exercise_type == ExerciseType.LUNGE:
                                 tips = self.coach_lunge(lm, angles, active_side, rep_state)
+                            elif exercise_type == ExerciseType.GLUTE_BRIDGE:
+                                tips = self.coach_glute_bridge(lm, angles, active_side, rep_state)
+                            elif exercise_type == ExerciseType.PUSH_UP:
+                                tips = self.coach_push_up(lm, angles, active_side, rep_state)
+                            elif exercise_type == ExerciseType.CHEST_FLY:
+                                tips = self.coach_chest_fly(lm, angles, active_side, rep_state)
                             elif exercise_type == ExerciseType.SUPERMAN:
                                 tips = self.coach_superman(lm, angles, active_side, rep_state)
+                            elif exercise_type == ExerciseType.BENT_OVER_ROW:
+                                tips = self.coach_bent_over_row(lm, angles, active_side, rep_state)
+                            elif exercise_type == ExerciseType.SHOULDER_PRESS:
+                                tips = self.coach_shoulder_press(lm, angles, active_side, rep_state)
+                            elif exercise_type == ExerciseType.LATERAL_RAISE:
+                                tips = self.coach_lateral_raise(lm, angles, active_side, rep_state)
                             elif exercise_type == ExerciseType.DIPS:
                                 tips = self.coach_dips(lm, angles, active_side, rep_state)
+                            elif exercise_type == ExerciseType.OVERHEAD_TRICEP:
+                                tips = self.coach_overhead_tricep(lm, angles, active_side, rep_state)
                             elif exercise_type == ExerciseType.PLANK:
                                 pass  # Evaluated continuously above
+                            elif exercise_type == ExerciseType.LEG_RAISE:
+                                tips = self.coach_leg_raise(lm, angles, active_side, rep_state)
                             else:
                                 tips = []
 
                             # Orientation warning
-                            if exercise_type in (ExerciseType.SHOULDER_PRESS,):
+                            if exercise_type in (ExerciseType.SHOULDER_PRESS, ExerciseType.LATERAL_RAISE, ExerciseType.CHEST_FLY):
                                 if orientation == "side":
                                     tips.append(("Please face the camera directly so that both of your knees and hips can be tracked from the front.", "orientation_front"))
                             else:
@@ -1803,7 +2236,7 @@ class PoseAnalyzer:
             )
 
         # Big rep / hold counter bottom-right
-        if exercise_type == ExerciseType.PLANK:
+        if exercise_type in (ExerciseType.PLANK, ExerciseType.WALL_SIT):
             total_txt = f"{int(rep_state.hold_seconds)}s"
         else:
             total_txt = str(rep_state.rep_count)
@@ -1825,23 +2258,32 @@ def generate_synthetic_reference(ex: ExerciseType, n: int = 60) -> np.ndarray:
     """
     t = np.linspace(0, 2 * np.pi, n)
     bell = 0.5 + 0.5 * np.cos(t)  # 1.0 at start, 0.0 at peak contraction/bottom, 1.0 at finish
+    inv_bell = 0.5 - 0.5 * np.cos(t)  # 0.0 at start, 1.0 at peak elevation, 0.0 at finish
 
     if ex == ExerciseType.BICEP_CURL:
         # Features: [elbow, shoulder]
-        # Elbow curls from 150 deg down to 55 deg and returns to 150 deg
         elbow = 55.0 + 95.0 * bell
-        # Shoulder remains stable and pinned to torso at ~15 deg
+        shoulder = np.full(n, 15.0)
+        return np.column_stack([elbow, shoulder])
+
+    elif ex == ExerciseType.HAMMER_CURL:
+        # Features: [elbow, shoulder]
+        elbow = 60.0 + 85.0 * bell
         shoulder = np.full(n, 15.0)
         return np.column_stack([elbow, shoulder])
 
     elif ex == ExerciseType.SQUAT:
         # Features: [hip, knee, ankle]
-        # Hip bends from 170 deg standing down to 90 deg and returns
         hip = 90.0 + 80.0 * bell
-        # Knee flexes from 165 deg down to 100 deg (parallel) and returns
         knee = 100.0 + 65.0 * bell
-        # Ankle dorsiflexes from 85 deg down to 75 deg and returns
         ankle = 75.0 + 10.0 * bell
+        return np.column_stack([hip, knee, ankle])
+
+    elif ex == ExerciseType.WALL_SIT:
+        # Features: [hip, knee, ankle] (Isometric hold)
+        hip = np.full(n, 95.0)
+        knee = np.full(n, 95.0)
+        ankle = np.full(n, 85.0)
         return np.column_stack([hip, knee, ankle])
 
     elif ex == ExerciseType.LUNGE:
@@ -1851,23 +2293,49 @@ def generate_synthetic_reference(ex: ExerciseType, n: int = 60) -> np.ndarray:
         ankle = 75.0 + 10.0 * bell
         return np.column_stack([hip, knee, ankle])
 
+    elif ex == ExerciseType.GLUTE_BRIDGE:
+        # Features: [hip, knee]
+        hip = 110.0 + 55.0 * inv_bell
+        knee = 90.0 + 15.0 * inv_bell
+        return np.column_stack([hip, knee])
+
     elif ex == ExerciseType.PUSH_UP:
         # Features: [elbow, shoulder, hip]
-        # Elbow flexes from 160 deg (extended) down to 85 deg (chest near floor) and returns
         elbow = 85.0 + 75.0 * bell
-        # Shoulder flexes from 75 deg down to 45 deg and returns
         shoulder = 45.0 + 30.0 * bell
-        # Hip remains rigid in plank posture at ~172 deg
         hip = np.full(n, 172.0)
+        return np.column_stack([elbow, shoulder, hip])
+
+    elif ex == ExerciseType.CHEST_FLY:
+        # Features: [shoulder, elbow]
+        shoulder = 35.0 + 50.0 * inv_bell
+        elbow = np.full(n, 155.0)
+        return np.column_stack([shoulder, elbow])
+
+    elif ex == ExerciseType.SUPERMAN:
+        # Features: [hip, shoulder]
+        hip = 162.0 + 16.0 * bell
+        shoulder = 155.0 + 20.0 * bell
+        return np.column_stack([hip, shoulder])
+
+    elif ex == ExerciseType.BENT_OVER_ROW:
+        # Features: [elbow, shoulder, hip]
+        elbow = 85.0 + 70.0 * bell
+        shoulder = 35.0 + 30.0 * (1.0 - bell)
+        hip = np.full(n, 110.0)
         return np.column_stack([elbow, shoulder, hip])
 
     elif ex == ExerciseType.SHOULDER_PRESS:
         # Features: [elbow, shoulder]
-        # Start at ears (elbow ~95 deg), press overhead (elbow ~165 deg), and return to ears
-        inv_bell = 0.5 - 0.5 * np.cos(t)  # 0 at start, 1 at overhead peak, 0 at finish
         elbow = 95.0 + 70.0 * inv_bell
         shoulder = 90.0 + 65.0 * inv_bell
         return np.column_stack([elbow, shoulder])
+
+    elif ex == ExerciseType.LATERAL_RAISE:
+        # Features: [shoulder, elbow]
+        shoulder = 25.0 + 65.0 * inv_bell
+        elbow = np.full(n, 160.0)
+        return np.column_stack([shoulder, elbow])
 
     elif ex == ExerciseType.DIPS:
         # Features: [elbow, shoulder, hip]
@@ -1876,11 +2344,11 @@ def generate_synthetic_reference(ex: ExerciseType, n: int = 60) -> np.ndarray:
         hip = np.full(n, 95.0)
         return np.column_stack([elbow, shoulder, hip])
 
-    elif ex == ExerciseType.SUPERMAN:
-        # Features: [hip, shoulder]
-        hip = 162.0 + 16.0 * bell
-        shoulder = 155.0 + 20.0 * bell
-        return np.column_stack([hip, shoulder])
+    elif ex == ExerciseType.OVERHEAD_TRICEP:
+        # Features: [elbow, shoulder]
+        elbow = 75.0 + 80.0 * inv_bell
+        shoulder = np.full(n, 165.0)
+        return np.column_stack([elbow, shoulder])
 
     elif ex == ExerciseType.PLANK:
         # Features: [hip, shoulder, knee]
@@ -1888,6 +2356,12 @@ def generate_synthetic_reference(ex: ExerciseType, n: int = 60) -> np.ndarray:
         shoulder = np.full(n, 90.0)
         knee = np.full(n, 175.0)
         return np.column_stack([hip, shoulder, knee])
+
+    elif ex == ExerciseType.LEG_RAISE:
+        # Features: [hip, knee]
+        hip = 95.0 + 70.0 * bell
+        knee = np.full(n, 170.0)
+        return np.column_stack([hip, knee])
 
     else:
         return np.column_stack([60.0 + 90.0 * bell, np.full(n, 20.0)])
@@ -1898,11 +2372,12 @@ def generate_synthetic_reference(ex: ExerciseType, n: int = 60) -> np.ndarray:
 # ===================================================================
 def main():
     import argparse
+    all_ex_keys = [e.value for e in ExerciseType]
     p = argparse.ArgumentParser(description="CV for Fit")
     p.add_argument("--source", default="0")
     p.add_argument(
         "--exercise", 
-        choices=["bicep_curl", "squat", "lunge", "push_up", "superman", "shoulder_press", "dips", "plank"], 
+        choices=all_ex_keys, 
         default="bicep_curl"
     )
     p.add_argument("--threshold", type=float, default=25.0)
@@ -1935,11 +2410,11 @@ def main():
     print("\n" + "=" * 60)
     print(f"  {ex.value.replace('_',' ').title()} - Workout Session Summary")
     print("=" * 60)
-    if ex in (ExerciseType.SQUAT, ExerciseType.SHOULDER_PRESS):
+    if ex in (ExerciseType.SHOULDER_PRESS, ExerciseType.LATERAL_RAISE, ExerciseType.CHEST_FLY):
         print("  Tracking view  : Front Profile (Bilateral)")
     else:
         print(f"  Side tracked   : {result['side'].capitalize()} Side Profile")
-    if ex == ExerciseType.PLANK:
+    if ex in (ExerciseType.PLANK, ExerciseType.WALL_SIT):
         print(f"  Hold duration  : {result['reps']} seconds")
     else:
         print(f"  Total reps     : {result['reps']}")
@@ -1953,7 +2428,7 @@ def main():
             tag = "PASS" if e.is_correct else "WARN"
             print(f"    Rep #{i:>2d} [{tag}]  Score: {e.form_score:5.1f}%  -  {e.feedback}")
     else:
-        if ex != ExerciseType.PLANK:
+        if ex not in (ExerciseType.PLANK, ExerciseType.WALL_SIT):
             print("  Repetitions    : No complete repetitions recorded.")
     print("=" * 60 + "\n")
 

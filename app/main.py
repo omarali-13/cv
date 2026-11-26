@@ -335,16 +335,32 @@ def control_session(payload: Dict[str, Any]):
 
 @app.get("/api/exercises", response_model=List[ExerciseInfo])
 def get_supported_exercises():
-    """List all 8 exercises supported by the CV engine with bilingual metadata."""
+    """List all 16 exercises supported by the CV engine with bilingual metadata and muscle taxonomy."""
     return [
+        # 1. Biceps (البايسبس)
         ExerciseInfo(id="bicep_curl", name="Bicep Curl", name_ar="بايسبس كيرل (عضلات الذراع)", type="reps", view="side", muscle="Biceps", muscle_ar="البايسبس"),
-        ExerciseInfo(id="squat", name="Squat", name_ar="سكوات (القرفصاء)", type="reps", view="side", muscle="Quads/Glutes", muscle_ar="الفخذ والمؤخرة"),
-        ExerciseInfo(id="lunge", name="Lunge", name_ar="طعنات الساق (لونجز)", type="reps", view="side", muscle="Quads/Hamstrings", muscle_ar="أوتار الفخذ والساقين"),
-        ExerciseInfo(id="push_up", name="Push Up", name_ar="تمرين الضغط", type="reps", view="side", muscle="Chest/Triceps", muscle_ar="الصدر والترايسبس"),
-        ExerciseInfo(id="superman", name="Superman", name_ar="تمرين سوبرمان", type="reps", view="side", muscle="Lower Back", muscle_ar="أسفل الظهر والأكتاف"),
-        ExerciseInfo(id="shoulder_press", name="Shoulder Press", name_ar="دفع الكتف العلوي", type="reps", view="front", muscle="Shoulders", muscle_ar="الأكتاف"),
-        ExerciseInfo(id="dips", name="Chair Dips", name_ar="غطس المقعد (ديبس)", type="reps", view="side", muscle="Triceps", muscle_ar="الترايسبس"),
-        ExerciseInfo(id="plank", name="Plank", name_ar="تمرين البلانك (ثبات)", type="hold", view="side", muscle="Core", muscle_ar="عضلات الجذع والبطن"),
+        ExerciseInfo(id="hammer_curl", name="Hammer Curl", name_ar="هامر كيرل (قبضة المطرقة)", type="reps", view="side", muscle="Biceps", muscle_ar="البايسبس"),
+        # 2. Chest (الصدر)
+        ExerciseInfo(id="push_up", name="Push Up", name_ar="تمرين الضغط الكلاسيكي", type="reps", view="side", muscle="Chest", muscle_ar="عضلات الصدر"),
+        ExerciseInfo(id="chest_fly", name="Chest Fly", name_ar="تفتيح الصدر (فلاي)", type="reps", view="front", muscle="Chest", muscle_ar="عضلات الصدر"),
+        # 3. Shoulders (الأكتاف)
+        ExerciseInfo(id="shoulder_press", name="Shoulder Press", name_ar="دفع الكتف العلوي", type="reps", view="front", muscle="Shoulders", muscle_ar="عضلات الأكتاف"),
+        ExerciseInfo(id="lateral_raise", name="Lateral Raise", name_ar="رفرفة جانبية للأكتاف", type="reps", view="front", muscle="Shoulders", muscle_ar="عضلات الأكتاف"),
+        # 4. Triceps (الترايسبس)
+        ExerciseInfo(id="dips", name="Chair Dips", name_ar="غطس المقعد (ديبس)", type="reps", view="side", muscle="Triceps", muscle_ar="عضلة الترايسبس"),
+        ExerciseInfo(id="overhead_tricep", name="Overhead Tricep", name_ar="ترايسبس خلف الرأس", type="reps", view="side", muscle="Triceps", muscle_ar="عضلة الترايسبس"),
+        # 5. Back (الظهر)
+        ExerciseInfo(id="superman", name="Superman", name_ar="تمرين سوبرمان للظهر", type="reps", view="side", muscle="Back", muscle_ar="عضلات الظهر"),
+        ExerciseInfo(id="bent_over_row", name="Bent-Over Row", name_ar="سحب الظهر منحنياً (رو)", type="reps", view="side", muscle="Back", muscle_ar="عضلات الظهر"),
+        # 6. Quads (الفخذ الأمامي)
+        ExerciseInfo(id="squat", name="Squat", name_ar="سكوات (القرفصاء)", type="reps", view="side", muscle="Quads", muscle_ar="الفخذ الأمامي"),
+        ExerciseInfo(id="wall_sit", name="Wall Sit", name_ar="ثبات الحائط (وول سيت)", type="hold", view="side", muscle="Quads", muscle_ar="الفخذ الأمامي"),
+        # 7. Glutes & Hamstrings (المؤخرة والفخذ الخلفي)
+        ExerciseInfo(id="lunge", name="Lunge", name_ar="طعنات الساق (لونجز)", type="reps", view="side", muscle="Glutes & Hamstrings", muscle_ar="المؤخرة والفخذ الخلفي"),
+        ExerciseInfo(id="glute_bridge", name="Glute Bridge", name_ar="جسر الألوية (جلوت بريدج)", type="reps", view="side", muscle="Glutes & Hamstrings", muscle_ar="المؤخرة والفخذ الخلفي"),
+        # 8. Core / Abs (عضلات البطن والجذع)
+        ExerciseInfo(id="plank", name="Plank", name_ar="تمرين البلانك (ثبات)", type="hold", view="side", muscle="Core", muscle_ar="عضلات البطن والجذع"),
+        ExerciseInfo(id="leg_raise", name="Leg Raise", name_ar="رفع الساقين (ليج ريز)", type="reps", view="side", muscle="Core", muscle_ar="عضلات البطن والجذع"),
     ]
 
 @app.post("/api/session/complete")

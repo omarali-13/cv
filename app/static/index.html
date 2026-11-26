@@ -182,7 +182,7 @@
 
     <!-- EXERCISE SELECTION RIBBON -->
     <section class="calm-card rounded-xl p-3.5 sm:p-4">
-      <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center justify-between mb-2.5">
         <div class="flex items-center gap-2">
           <div class="w-2.5 h-2.5 bg-app-emerald rounded-full"></div>
           <h2 id="exerciseSelectorHeading" class="text-xs sm:text-sm font-bold text-white uppercase tracking-wide">
@@ -194,8 +194,13 @@
         </span>
       </div>
 
+      <!-- Muscle Group Filter Tabs -->
+      <div class="flex items-center gap-1.5 overflow-x-auto pb-2 mb-3 scrollbar-none" id="muscleFilterBar">
+        <!-- Rendered by JS -->
+      </div>
+
       <!-- Exercise Buttons Grid -->
-      <div id="exerciseDeck" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
+      <div id="exerciseDeck" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-8 gap-2">
         <!-- Rendered by JS -->
       </div>
     </section>
@@ -563,6 +568,7 @@
       audioEnabled: true,
       showSkeleton: true,
       selectedExercise: 'bicep_curl',
+      selectedMuscleFilter: 'all',
       supportedExercises: [],
       pollInterval: null,
       sessionTimerInterval: null,
@@ -572,6 +578,18 @@
       selectedVideoFile: null,
       isAnalyzingVideo: false,
     };
+
+    const MUSCLE_GROUPS = [
+      { id: 'all', name: 'All (16)', name_ar: 'الكل (16)' },
+      { id: 'Biceps', name: 'Biceps', name_ar: 'البايسبس' },
+      { id: 'Chest', name: 'Chest', name_ar: 'الصدر' },
+      { id: 'Shoulders', name: 'Shoulders', name_ar: 'الأكتاف' },
+      { id: 'Triceps', name: 'Triceps', name_ar: 'الترايسبس' },
+      { id: 'Back', name: 'Back', name_ar: 'الظهر' },
+      { id: 'Quads', name: 'Quads', name_ar: 'الفخذ الأمامي' },
+      { id: 'Glutes & Hamstrings', name: 'Glutes & Hamstrings', name_ar: 'المؤخرة والخلفي' },
+      { id: 'Core', name: 'Core / Abs', name_ar: 'البطن والجذع' },
+    ];
 
     const I18N = {
       ar: {
@@ -693,6 +711,7 @@
     document.addEventListener('DOMContentLoaded', async () => {
       lucide.createIcons();
       await fetchSupportedExercises();
+      renderMuscleFilterBar();
       renderExerciseDeck();
       applyLanguageUI();
       startStatusPolling();
@@ -709,15 +728,47 @@
       } catch (e) {
         AppState.supportedExercises = [
           { id: "bicep_curl", name: "Bicep Curl", name_ar: "بايسبس كيرل", type: "reps", view: "side", muscle: "Biceps", muscle_ar: "البايسبس" },
-          { id: "squat", name: "Squat", name_ar: "سكوات", type: "reps", view: "side", muscle: "Quads/Glutes", muscle_ar: "الفخذ" },
-          { id: "lunge", name: "Lunge", name_ar: "طعنات الساق", type: "reps", view: "side", muscle: "Quads", muscle_ar: "الساقين" },
+          { id: "hammer_curl", name: "Hammer Curl", name_ar: "هامر كيرل (مطرقة)", type: "reps", view: "side", muscle: "Biceps", muscle_ar: "البايسبس" },
           { id: "push_up", name: "Push Up", name_ar: "تمرين الضغط", type: "reps", view: "side", muscle: "Chest", muscle_ar: "الصدر" },
-          { id: "superman", name: "Superman", name_ar: "سوبرمان", type: "reps", view: "side", muscle: "Back", muscle_ar: "الظهر" },
+          { id: "chest_fly", name: "Chest Fly", name_ar: "تفتيح الصدر (فلاي)", type: "reps", view: "front", muscle: "Chest", muscle_ar: "الصدر" },
           { id: "shoulder_press", name: "Shoulder Press", name_ar: "دفع الكتف", type: "reps", view: "front", muscle: "Shoulders", muscle_ar: "الأكتاف" },
-          { id: "dips", name: "Chair Dips", name_ar: "غطس المقعد", type: "reps", view: "side", muscle: "Triceps", muscle_ar: "الترايسبس" },
-          { id: "plank", name: "Plank", name_ar: "تمرين البلانك", type: "hold", view: "side", muscle: "Core", muscle_ar: "البطن" },
+          { id: "lateral_raise", name: "Lateral Raise", name_ar: "رفرفة جانبية للأكتاف", type: "reps", view: "front", muscle: "Shoulders", muscle_ar: "الأكتاف" },
+          { id: "dips", name: "Chair Dips", name_ar: "غطس المقعد (ديبس)", type: "reps", view: "side", muscle: "Triceps", muscle_ar: "الترايسبس" },
+          { id: "overhead_tricep", name: "Overhead Tricep", name_ar: "ترايسبس خلف الرأس", type: "reps", view: "side", muscle: "Triceps", muscle_ar: "الترايسبس" },
+          { id: "superman", name: "Superman", name_ar: "تمرين سوبرمان", type: "reps", view: "side", muscle: "Back", muscle_ar: "الظهر" },
+          { id: "bent_over_row", name: "Bent-Over Row", name_ar: "سحب الظهر (رو)", type: "reps", view: "side", muscle: "Back", muscle_ar: "الظهر" },
+          { id: "squat", name: "Squat", name_ar: "سكوات (القرفصاء)", type: "reps", view: "side", muscle: "Quads", muscle_ar: "الفخذ الأمامي" },
+          { id: "wall_sit", name: "Wall Sit", name_ar: "ثبات الحائط (وول سيت)", type: "hold", view: "side", muscle: "Quads", muscle_ar: "الفخذ الأمامي" },
+          { id: "lunge", name: "Lunge", name_ar: "طعنات الساق (لونجز)", type: "reps", view: "side", muscle: "Glutes & Hamstrings", muscle_ar: "المؤخرة والخلفي" },
+          { id: "glute_bridge", name: "Glute Bridge", name_ar: "جسر الألوية (بريدج)", type: "reps", view: "side", muscle: "Glutes & Hamstrings", muscle_ar: "المؤخرة والخلفي" },
+          { id: "plank", name: "Plank", name_ar: "تمرين البلانك", type: "hold", view: "side", muscle: "Core", muscle_ar: "عضلات البطن" },
+          { id: "leg_raise", name: "Leg Raise", name_ar: "رفع الساقين", type: "reps", view: "side", muscle: "Core", muscle_ar: "عضلات البطن" },
         ];
       }
+    }
+
+    function renderMuscleFilterBar() {
+      const container = document.getElementById('muscleFilterBar');
+      if (!container) return;
+      container.innerHTML = '';
+
+      MUSCLE_GROUPS.forEach(g => {
+        const isSelected = (g.id === AppState.selectedMuscleFilter);
+        const name = (AppState.lang === 'ar') ? g.name_ar : g.name;
+        const btn = document.createElement('button');
+        btn.onclick = () => {
+          AppState.selectedMuscleFilter = g.id;
+          renderMuscleFilterBar();
+          renderExerciseDeck();
+        };
+        btn.className = `whitespace-nowrap px-3 py-1 rounded-lg text-xs font-semibold transition-all border ${
+          isSelected
+            ? 'bg-app-emerald text-white border-app-emerald shadow-sm'
+            : 'bg-app-void text-gray-400 border-app-border hover:text-white hover:border-app-borderLight'
+        }`;
+        btn.textContent = name;
+        container.appendChild(btn);
+      });
     }
 
     function renderExerciseDeck() {
@@ -725,27 +776,34 @@
       if (!container) return;
       container.innerHTML = '';
 
-      AppState.supportedExercises.forEach(ex => {
+      const filtered = (AppState.selectedMuscleFilter === 'all')
+        ? AppState.supportedExercises
+        : AppState.supportedExercises.filter(ex => ex.muscle === AppState.selectedMuscleFilter);
+
+      filtered.forEach(ex => {
         const isSelected = (ex.id === AppState.selectedExercise);
         const name = (AppState.lang === 'ar') ? ex.name_ar : ex.name;
         const muscle = (AppState.lang === 'ar') ? ex.muscle_ar : ex.muscle;
+        const isHold = (ex.type === 'hold');
 
         const btn = document.createElement('button');
         btn.onclick = () => selectExercise(ex.id);
-        btn.className = `p-2.5 rounded-lg text-right transition-all flex flex-col justify-between border ${
+        btn.className = `p-2.5 rounded-xl text-right transition-all flex flex-col justify-between border ${
           isSelected 
-            ? 'bg-app-surface border-app-emerald text-white shadow-sm' 
+            ? 'bg-app-surface border-app-emerald text-white shadow-lg shadow-app-emerald/10 ring-1 ring-app-emerald/50' 
             : 'bg-app-void border-app-border text-gray-400 hover:text-white hover:border-app-borderLight'
         }`;
 
+        const viewColor = (ex.view === 'front') ? 'bg-app-cyan/20 text-app-cyan' : 'bg-app-emerald/20 text-app-emeraldLight';
+        const typeBadge = isHold ? '<span class="mono-num text-[9px] uppercase px-1 py-0.5 rounded font-bold bg-amber-500/20 text-amber-300">HOLD</span>' : '';
+
         btn.innerHTML = `
           <div class="flex items-center justify-between w-full mb-1">
-            <span class="mono-num text-[10px] uppercase px-1.5 py-0.5 rounded font-bold ${
-              isSelected ? 'bg-app-emerald text-white' : 'bg-app-card text-gray-400'
-            }">
+            <span class="mono-num text-[9px] uppercase px-1.5 py-0.5 rounded font-bold ${viewColor}">
               ${ex.view.toUpperCase()}
             </span>
-            <span class="w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-app-emerald' : 'bg-transparent'}"></span>
+            ${typeBadge}
+            <span class="w-2 h-2 rounded-full ${isSelected ? 'bg-app-emerald shadow-sm' : 'bg-transparent'}"></span>
           </div>
           <div class="text-xs font-bold leading-tight truncate w-full ${isSelected ? 'text-app-emeraldLight' : 'text-gray-200'}">
             ${name}
@@ -763,8 +821,8 @@
         if (badge) {
           const isFront = (activeObj.view === 'front');
           badge.textContent = isFront 
-            ? (AppState.lang === 'ar' ? 'الوضعية: مواجهة الكاميرا' : 'VIEW: FRONT PROFILE')
-            : (AppState.lang === 'ar' ? 'الوضعية: بالجنب للكاميرا' : 'VIEW: SIDE PROFILE');
+            ? (AppState.lang === 'ar' ? 'الوضعية: مواجهة الكاميرا (Front Profile)' : 'VIEW: FRONT PROFILE')
+            : (AppState.lang === 'ar' ? 'الوضعية: بالجنب للكاميرا (Side Profile)' : 'VIEW: SIDE PROFILE');
           badge.className = `mono-num text-[11px] px-2.5 py-0.5 rounded border font-medium ${
             isFront ? 'bg-app-cyan/15 border-app-cyan/30 text-app-cyan' : 'bg-app-surface border-app-border text-app-emeraldLight'
           }`;
@@ -826,6 +884,7 @@
 
     function applyLanguageUI() {
       const t = I18N[AppState.lang];
+      renderMuscleFilterBar();
       document.getElementById('appSubtitle').textContent = t.appSubtitle;
       document.getElementById('tabLiveText').textContent = t.tabLive;
       document.getElementById('tabLabText').textContent = t.tabLab;
@@ -834,9 +893,9 @@
       document.getElementById('exerciseSelectorHeading').textContent = t.exerciseSelectorHeading;
       document.getElementById('romLabel').textContent = t.romLabel;
       
-      const isPlank = (AppState.selectedExercise === 'plank');
-      document.getElementById('counterCardTitle').textContent = isPlank ? t.counterCardTitlePlank : t.counterCardTitle;
-      document.getElementById('counterUnit').textContent = isPlank ? t.secondsUnit : t.repsUnit;
+      const isHold = (AppState.selectedExercise === 'plank' || AppState.selectedExercise === 'wall_sit');
+      document.getElementById('counterCardTitle').textContent = isHold ? t.counterCardTitlePlank : t.counterCardTitle;
+      document.getElementById('counterUnit').textContent = isHold ? t.secondsUnit : t.repsUnit;
       
       document.getElementById('sessionTimerLabel').textContent = t.sessionTimerLabel;
       document.getElementById('kinematicsTitle').textContent = t.kinematicsTitle;

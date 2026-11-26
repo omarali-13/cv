@@ -144,7 +144,7 @@ class RemoteSession:
         left_angles: Optional[dict[str, float]] = None
         right_angles: Optional[dict[str, float]] = None
 
-        is_front_view = self.exercise_type in (ExerciseType.SHOULDER_PRESS,)
+        is_front_view = self.exercise_type in (ExerciseType.SHOULDER_PRESS, ExerciseType.LATERAL_RAISE, ExerciseType.CHEST_FLY)
 
         if is_front_view:
             self.active_side = "both"
@@ -153,8 +153,8 @@ class RemoteSession:
 
             if left_angles is not None and right_angles is not None:
                 angles = {
-                    "elbow": (left_angles["elbow"] + right_angles["elbow"]) / 2.0,
-                    "shoulder": (left_angles["shoulder"] + right_angles["shoulder"]) / 2.0,
+                    k: (left_angles[k] + right_angles[k]) / 2.0
+                    for k in left_angles if k in right_angles
                 }
         else:
             self.active_side = self.analyzer.detect_active_side(landmarks, self.exercise_type)
@@ -178,10 +178,12 @@ class RemoteSession:
             primary = self.config["primary"]
             p_angle = angles.get(primary, 180.0)
 
-            # Plank posture check
+            # Hold posture check (Plank and Wall Sit)
             tips = []
             if self.exercise_type == ExerciseType.PLANK:
                 tips = self.analyzer.coach_plank(landmarks, angles, self.active_side, self.rep_state)
+            elif self.exercise_type == ExerciseType.WALL_SIT:
+                tips = self.analyzer.coach_wall_sit(landmarks, angles, self.active_side, self.rep_state)
 
             # State machine update
             prev_holding = (self.rep_state.phase == "HOLDING")
@@ -191,8 +193,8 @@ class RemoteSession:
                 dt_sec=dt_sec
             )
 
-            # Handle plank voice milestones
-            if self.exercise_type == ExerciseType.PLANK:
+            # Handle plank & wall sit voice milestones
+            if self.exercise_type in (ExerciseType.PLANK, ExerciseType.WALL_SIT):
                 sec = int(self.rep_state.hold_seconds)
                 if self.rep_state.is_holding:
                     if not prev_holding and self.rep_state.hold_seconds < 1.0:
@@ -222,21 +224,39 @@ class RemoteSession:
                     announcement_ar = VOICE_PHRASES["rep_mistake"]["ar"]
                     announcement_en = VOICE_PHRASES["rep_mistake"]["en"]
 
-            # Contextual coaching tips
+            # Contextual coaching tips for all 16 exercises
             if self.exercise_type == ExerciseType.BICEP_CURL:
                 tips = self.analyzer.coach_bicep_curl(landmarks, angles, self.active_side, self.rep_state)
+            elif self.exercise_type == ExerciseType.HAMMER_CURL:
+                tips = self.analyzer.coach_hammer_curl(landmarks, angles, self.active_side, self.rep_state)
             elif self.exercise_type == ExerciseType.SQUAT:
                 tips = self.analyzer.coach_squat(landmarks, angles, self.active_side, self.rep_state)
-            elif self.exercise_type == ExerciseType.SHOULDER_PRESS:
-                tips = self.analyzer.coach_shoulder_press(landmarks, angles, self.active_side, self.rep_state)
-            elif self.exercise_type == ExerciseType.PUSH_UP:
-                tips = self.analyzer.coach_push_up(landmarks, angles, self.active_side, self.rep_state)
+            elif self.exercise_type == ExerciseType.WALL_SIT:
+                pass  # Evaluated continuously above
             elif self.exercise_type == ExerciseType.LUNGE:
                 tips = self.analyzer.coach_lunge(landmarks, angles, self.active_side, self.rep_state)
+            elif self.exercise_type == ExerciseType.GLUTE_BRIDGE:
+                tips = self.analyzer.coach_glute_bridge(landmarks, angles, self.active_side, self.rep_state)
+            elif self.exercise_type == ExerciseType.PUSH_UP:
+                tips = self.analyzer.coach_push_up(landmarks, angles, self.active_side, self.rep_state)
+            elif self.exercise_type == ExerciseType.CHEST_FLY:
+                tips = self.analyzer.coach_chest_fly(landmarks, angles, self.active_side, self.rep_state)
             elif self.exercise_type == ExerciseType.SUPERMAN:
                 tips = self.analyzer.coach_superman(landmarks, angles, self.active_side, self.rep_state)
+            elif self.exercise_type == ExerciseType.BENT_OVER_ROW:
+                tips = self.analyzer.coach_bent_over_row(landmarks, angles, self.active_side, self.rep_state)
+            elif self.exercise_type == ExerciseType.SHOULDER_PRESS:
+                tips = self.analyzer.coach_shoulder_press(landmarks, angles, self.active_side, self.rep_state)
+            elif self.exercise_type == ExerciseType.LATERAL_RAISE:
+                tips = self.analyzer.coach_lateral_raise(landmarks, angles, self.active_side, self.rep_state)
             elif self.exercise_type == ExerciseType.DIPS:
                 tips = self.analyzer.coach_dips(landmarks, angles, self.active_side, self.rep_state)
+            elif self.exercise_type == ExerciseType.OVERHEAD_TRICEP:
+                tips = self.analyzer.coach_overhead_tricep(landmarks, angles, self.active_side, self.rep_state)
+            elif self.exercise_type == ExerciseType.PLANK:
+                pass  # Evaluated continuously above
+            elif self.exercise_type == ExerciseType.LEG_RAISE:
+                tips = self.analyzer.coach_leg_raise(landmarks, angles, self.active_side, self.rep_state)
 
             # Orientation checks
             if is_front_view:
