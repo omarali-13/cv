@@ -67,33 +67,56 @@ exit /b 0
 
 :choose_exercise
 echo.
-echo    ------------------------------------
-echo       Choose an Exercise
-echo    ------------------------------------
-echo       [1]  Bicep Curl
-echo       [2]  Squat
-echo       [3]  Lunge
-echo       [4]  Push-up
-echo       [5]  Superman
-echo       [6]  Shoulder Press
-echo       [7]  Chair Dips
-echo       [8]  Plank
-echo    ------------------------------------
+echo    ----------------------------------------------------------------------
+echo       Choose an Exercise / اختر التمرين من التمارين الـ 16
+echo    ----------------------------------------------------------------------
+echo       [ Biceps / الذراع الأمامي ]
+echo         [1]  Bicep Curl             [2]  Hammer Curl
+echo.
+echo       [ Chest / الصدر ]
+echo         [3]  Push-up                [4]  Chest Fly
+echo.
+echo       [ Shoulders / الأكتاف ]
+echo         [5]  Shoulder Press         [6]  Lateral Raise
+echo.
+echo       [ Triceps / الذراع الخلفي ]
+echo         [7]  Chair Dips             [8]  Overhead Tricep
+echo.
+echo       [ Back / الظهر ]
+echo         [9]  Superman               [10] Bent-Over Row
+echo.
+echo       [ Quads / الفخذ الأمامي ]
+echo         [11] Squat                  [12] Wall Sit (Isometric Hold)
+echo.
+echo       [ Glutes & Hamstrings / المؤخرة والخلفي ]
+echo         [13] Lunge                  [14] Glute Bridge
+echo.
+echo       [ Core & Abs / البطن والجذع ]
+echo         [15] Plank (Isometric Hold) [16] Leg Raise
+echo    ----------------------------------------------------------------------
 echo.
 
 :ask_exercise
-set /p "exercise_choice=    Enter exercise (1-8): "
+set /p "exercise_choice=    Enter exercise (1-16): "
 
 if "%exercise_choice%"=="1" set "exercise=bicep_curl" & goto choose_source
-if "%exercise_choice%"=="2" set "exercise=squat" & goto choose_source
-if "%exercise_choice%"=="3" set "exercise=lunge" & goto choose_source
-if "%exercise_choice%"=="4" set "exercise=push_up" & goto choose_source
-if "%exercise_choice%"=="5" set "exercise=superman" & goto choose_source
-if "%exercise_choice%"=="6" set "exercise=shoulder_press" & goto choose_source
+if "%exercise_choice%"=="2" set "exercise=hammer_curl" & goto choose_source
+if "%exercise_choice%"=="3" set "exercise=push_up" & goto choose_source
+if "%exercise_choice%"=="4" set "exercise=chest_fly" & goto choose_source
+if "%exercise_choice%"=="5" set "exercise=shoulder_press" & goto choose_source
+if "%exercise_choice%"=="6" set "exercise=lateral_raise" & goto choose_source
 if "%exercise_choice%"=="7" set "exercise=dips" & goto choose_source
-if "%exercise_choice%"=="8" set "exercise=plank" & goto choose_source
+if "%exercise_choice%"=="8" set "exercise=overhead_tricep" & goto choose_source
+if "%exercise_choice%"=="9" set "exercise=superman" & goto choose_source
+if "%exercise_choice%"=="10" set "exercise=bent_over_row" & goto choose_source
+if "%exercise_choice%"=="11" set "exercise=squat" & goto choose_source
+if "%exercise_choice%"=="12" set "exercise=wall_sit" & goto choose_source
+if "%exercise_choice%"=="13" set "exercise=lunge" & goto choose_source
+if "%exercise_choice%"=="14" set "exercise=glute_bridge" & goto choose_source
+if "%exercise_choice%"=="15" set "exercise=plank" & goto choose_source
+if "%exercise_choice%"=="16" set "exercise=leg_raise" & goto choose_source
 
-echo    [!] Invalid choice. Please enter 1 to 8.
+echo    [!] Invalid choice. Please enter 1 to 16.
 goto ask_exercise
 
 :choose_source
